@@ -1,0 +1,390 @@
+.page-head.linha {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* ---------- alternador antes/depois ---------- */
+
+.alternador {
+  display: inline-flex;
+  background: #e2e8f0;
+  border-radius: var(--r);
+  padding: 3px;
+  gap: 3px;
+  flex: none;
+}
+
+.alternador button {
+  border: none;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 13.5px;
+  font-weight: 620;
+  padding: 7px 15px;
+  border-radius: 7px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.alternador button:hover:not(.ativo) {
+  color: var(--ink);
+}
+
+.alternador button.ativo {
+  background: var(--surface);
+  color: var(--brand);
+  box-shadow: var(--shadow);
+}
+
+/* ---------- ficha ---------- */
+
+.ficha {
+  display: grid;
+  grid-template-columns: minmax(230px, 1fr) 2fr minmax(220px, 1fr);
+  gap: 26px;
+  align-items: center;
+  padding: 18px 22px;
+  margin-bottom: 18px;
+}
+
+.identidade {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand-deep);
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+  font-weight: 680;
+  flex: none;
+}
+
+.identidade h2 {
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.identidade .muted {
+  font-size: 13px;
+}
+
+.ficha dl {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 0 26px;
+  margin: 0;
+  justify-content: start;
+}
+
+.ficha dt {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.ficha dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 550;
+}
+
+.diagnostico {
+  border-left: 3px solid var(--brand);
+  padding-left: 13px;
+  font-size: 14px;
+  font-weight: 550;
+}
+
+/* ---------- insight ---------- */
+
+.insight {
+  background: linear-gradient(180deg, #f0fbf8, #ffffff);
+  border: 1px solid #b9e3dc;
+  border-radius: var(--r-lg);
+  padding: 16px 20px;
+  margin-bottom: 18px;
+}
+
+.insight-marca {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--brand);
+  border-radius: var(--r-sm);
+  padding: 3px 8px;
+  margin-bottom: 9px;
+}
+
+.insight p {
+  font-size: 15px;
+  color: var(--ink);
+  max-width: 78ch;
+}
+
+.insight-rodape {
+  margin-top: 8px !important;
+  font-size: 13.5px !important;
+  color: var(--ink-2) !important;
+}
+
+/* ---------- filtros ---------- */
+
+.filtros {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.chip .dot {
+  background: var(--cor);
+}
+
+.chip .qtd {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.chip.desligado {
+  opacity: 0.45;
+  background: var(--surface-2);
+  text-decoration: line-through;
+}
+
+.filtros .total {
+  margin-left: auto;
+  font-size: 13px;
+}
+
+/* ---------- linha do tempo ---------- */
+
+.linha-tempo {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.linha-tempo li {
+  display: grid;
+  grid-template-columns: 96px 22px 1fr;
+  align-items: start;
+  gap: 0;
+  padding-bottom: 12px;
+  position: relative;
+}
+
+.linha-tempo li::before {
+  content: '';
+  position: absolute;
+  left: 106px;
+  top: 18px;
+  bottom: -6px;
+  width: 2px;
+  background: var(--line);
+}
+
+.linha-tempo li:last-child::before {
+  display: none;
+}
+
+.data {
+  font-size: 13px;
+  font-weight: 620;
+  color: var(--ink-2);
+  padding-top: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.marcador {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  margin: 15px 0 0 5px;
+  box-shadow: 0 0 0 3px var(--bg);
+  z-index: 1;
+}
+
+.evento {
+  padding: 13px 16px;
+  margin-left: 8px;
+}
+
+.evento header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.evento h3 {
+  font-size: 15px;
+  font-weight: 620;
+  flex: 1;
+  min-width: 0;
+}
+
+.evento .meta {
+  font-size: 12.5px;
+  margin: 3px 0 6px;
+}
+
+.evento p {
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+
+.linha-tempo li.destaque .evento {
+  border-left: 3px solid var(--brand);
+}
+
+/* ---------- visão fragmentada ---------- */
+
+.alerta-fragmentado {
+  background: var(--danger-soft);
+  border: 1px solid #f0c8c4;
+  color: #7d211b;
+  border-radius: var(--r-lg);
+  padding: 15px 19px;
+  font-size: 14.5px;
+  margin-bottom: 18px;
+  max-width: 92ch;
+}
+
+.alerta-fragmentado strong {
+  display: block;
+  font-size: 15.5px;
+  margin-bottom: 3px;
+}
+
+.colunas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.coluna {
+  overflow: hidden;
+}
+
+.coluna header {
+  border-top: 3px solid var(--line-strong);
+  padding: 14px 16px 13px;
+  border-bottom: 1px solid var(--line);
+}
+
+.coluna header .unidade {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 8px 0 2px;
+}
+
+.nome-registro {
+  font-size: 14.5px;
+  font-weight: 640;
+  margin-bottom: 4px;
+}
+
+.coluna header .mono {
+  font-size: 11.5px;
+  line-height: 1.55;
+}
+
+.contagem {
+  padding: 10px 16px;
+  font-size: 12.5px;
+  font-weight: 620;
+  background: var(--warn-soft);
+  color: #7a4b09;
+  border-bottom: 1px solid var(--line);
+}
+
+.contagem .muted {
+  font-weight: 500;
+  color: #9a7434;
+}
+
+.coluna ul {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+
+.coluna li {
+  display: flex;
+  gap: 10px;
+  padding: 7px 16px;
+  font-size: 13px;
+}
+
+.coluna li + li {
+  border-top: 1px solid var(--line);
+}
+
+.coluna li .mono {
+  color: var(--muted);
+  flex: none;
+  font-size: 12px;
+  padding-top: 1px;
+}
+
+.rodape-fragmentado {
+  margin-top: 18px;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.rodape-fragmentado a,
+.rodape-fragmentado .link {
+  color: var(--brand);
+  font-weight: 620;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.rodape-fragmentado a:hover,
+.rodape-fragmentado .link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1180px) {
+  .ficha {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 16px;
+  }
+
+  .colunas {
+    grid-template-columns: 1fr;
+  }
+}
