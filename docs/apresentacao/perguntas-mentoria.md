@@ -1,146 +1,140 @@
-# Perguntas para a mentoria
+# Perguntas para a mentoria — banca da Oracle
 
-São 10 minutos de feedback. Não dá para fazer tudo — as três marcadas com **★** são as que
-eu faria primeiro se o tempo apertar.
+São 10 minutos de feedback. As três marcadas com **★** são as primeiras se o tempo apertar.
 
-O critério para uma pergunta entrar aqui: **só alguém com experiência de mercado responde**.
-Pergunta que o Google responde desperdiça a mentoria.
-
----
-
-## 1. O risco que pode matar o produto
-
-### ★ Na prática, o hospital consegue liberar a API do MV ou do Tasy?
-
-> "Todo o nosso produto assume que o hospital consegue nos dar acesso ao ERP dele. Na
-> experiência de vocês, isso acontece? O fornecedor libera, cobra à parte, ou simplesmente
-> empurra com a barriga? E quando libera, quem decide: o hospital ou o fornecedor?"
-
-**Por que perguntar:** é a hipótese sobre a qual o negócio inteiro se apoia, e é a única que
-não conseguimos testar sozinhos. Se a resposta for "não liberam", não é ajuste de roadmap —
-é mudar de produto.
-
-### Já viram alguém conseguir? Como foi?
-
-Se a resposta anterior for "dá, mas é difícil", esta pergunta transforma a dificuldade em
-caminho. Peça o exemplo concreto, não o princípio geral.
+O critério: **perguntar à Oracle o que só a Oracle responde.** Pergunta de mercado
+genérica desperdiça uma banca que domina banco de dados, cloud e — desde a compra do
+Cerner — sistema de saúde.
 
 ---
 
-## 2. A concorrência que talvez não estejamos enxergando
+## Antes de perguntar, diga isto
 
-### ★ A RNDS não resolve isso?
+O slide da stack lista Autonomous Database, AI Vector Search, Object Storage, OML, OCI
+Generative AI, Document Understanding, OCI Language, ORDS, APEX, API Gateway, Data Safe e
+Terraform. **Implementado: Autonomous Database.**
 
-> "O Ministério da Saúde está construindo a Rede Nacional de Dados em Saúde, também em
-> FHIR, com a proposta de unificar dados do cidadão. Isso nos torna redundantes em três
-> anos, ou vira um canal a mais para nós? Como vocês veem essa sobreposição?"
+Diga antes que perguntem:
 
-**Por que perguntar:** é a objeção mais forte que existe contra a Sutura, e é melhor levantá-la
-nós mesmos do que ser pegos por ela. Perguntar demonstra que conhecemos o cenário; esperar
-que perguntem demonstra o contrário.
+> "Esse slide é a arquitetura alvo, não o que está implementado. Hoje roda Autonomous
+> Database; o resto é o desenho para onde vamos."
 
-### Por que os próprios ERPs não fizeram isso ainda?
-
-> "Unificar identidade de paciente entre sistemas parece do interesse do próprio MV. Se eles
-> não fizeram, é porque não é prioridade, porque não é do interesse comercial deles, ou
-> porque é mais difícil do que parece?"
-
-**Por que perguntar:** as três respostas possíveis levam a estratégias completamente
-diferentes. A terceira é a mais perigosa para nós.
+Uma frase transforma uma pegadinha em maturidade de engenharia. Guardar silêncio sobre isso
+diante de quem fabrica esses produtos é o pior caminho possível.
 
 ---
 
-## 3. Modelo de negócio
+## 1. Posicionamento — a pergunta que só eles respondem
 
-### Como se cobra por isso?
+### ★ A Oracle é dona do Oracle Health. Onde uma camada como a nossa se encaixa?
 
-> "Assinatura por leito, por paciente unificado, por integração ativa, por volume de
-> registros? O que o hospital aceita e o que ele rejeita na hora?"
+> "Desde a aquisição do Cerner, a Oracle não é só o banco: é também um sistema de saúde.
+> Uma camada que costura dados por cima de ERPs de terceiros faz sentido no ecossistema de
+> vocês, ou vocês veem esse problema sendo resolvido dentro do próprio produto?"
 
-**Por que perguntar:** temos "SaaS por assinatura" no pitch, o que na prática não diz nada.
-Quem vendeu para hospital sabe qual métrica passa no comitê de compras e qual trava.
-
-### Quem assina o contrato, e quanto tempo leva?
-
-> "Numa clínica de médio porte, quem é o dono dessa decisão — TI, faturamento, diretoria
-> clínica? E qual é o ciclo de venda realista: três meses, um ano?"
-
-**Por que perguntar:** muda completamente o que precisa existir no produto. Venda para TI
-pede documentação de integração; venda para faturamento pede ROI em reais.
+**Por que perguntar:** é o único lugar onde essa banca tem uma visão que ninguém mais tem —
+eles estão dos dois lados do problema. E a resposta diz se a Sutura é parceira ou
+redundante no mundo Oracle.
 
 ---
 
-## 4. Produto
+## 2. Engenharia — falar a língua deles
 
-### ★ Nossa aposta foi a identificação de pacientes. Foi a aposta certa?
+### ★ O record linkage dentro do banco se sustenta em escala?
 
-> "Dos três pilares do pitch — integração, unificação de histórico e automação de
-> back-office — construímos primeiro a identificação, porque nos pareceu o problema mais
-> difícil e o mais defensável. Se vocês fossem vender, começariam por aí ou pela glosa, que
-> dá para mostrar em reais?"
+> "Calculamos o score com `UTL_MATCH.JARO_WINKLER_SIMILARITY` dentro do Oracle, com blocking
+> por CNS, CPF, data de nascimento e `SOUNDEX`. Funciona bem no nosso volume. Numa rede
+> hospitalar com milhões de registros, isso se sustenta — ou a partir de certo ponto vocês
+> partiriam para outra abordagem?"
 
-**Por que perguntar:** é a maior decisão que já tomamos, e a única em que ainda dá tempo de
-mudar antes da entrega de 08/09.
+**Por que perguntar:** é pergunta de engenheiro para engenheiro, sobre a decisão técnica
+central do projeto. E abre espaço para eles sugerirem o que a gente não conhece.
 
-### Existe quem revise a fila de identificação?
+### ★ Onde o AI Vector Search entraria de verdade?
 
-> "Nosso desenho assume que alguém no hospital olha os casos duvidosos e decide. Esse papel
-> existe de verdade? É do faturamento, do SAME, da TI? Se não existir, o produto precisa
-> decidir sozinho — o que é bem mais arriscado com dado clínico."
+> "Colocamos AI Vector Search no desenho e não usamos. Se fôssemos usar nesse problema, ele
+> entraria na similaridade de nomes — ou em outra parte que a gente não está enxergando?"
 
-**Por que perguntar:** essa suposição está embutida em cada tela e nunca foi validada com
-ninguém que trabalhe em hospital.
+**Por que perguntar:** converte o serviço prometido e não entregue em pergunta legítima, em
+vez de dívida escondida. E a resposta pode redirecionar a fase 3.
 
-### O caso do homônimo assusta ou tranquiliza?
+### Dos serviços que listamos, quais fazem sentido e quais são ruído?
 
-> "Mostramos o sistema recusando unir dois pacientes de mesmo nome. Isso passa segurança,
-> ou levanta o medo de que em algum outro caso ele vá unir errado?"
+> "Listamos doze serviços da Oracle no slide de arquitetura. Sendo francos: quantos desses
+> resolvem um problema que a gente tem de verdade, e quantos só engordam o slide?"
 
-**Por que perguntar:** foi a decisão de design de que mais nos orgulhamos. Vale saber se ela
-comunica o que a gente acha que comunica.
+**Por que perguntar:** ninguém melhor para dizer que a Sutura não precisa de metade deles.
+E a pergunta demonstra que a gente sabe a diferença entre arquitetura e vitrine.
 
 ---
 
-## 5. Feedback direto sobre a apresentação
+## 3. Operação e conformidade
+
+### Como se mascara dado de saúde fora de produção?
+
+> "Dado de saúde é sensível pela LGPD. Colocamos Data Safe no desenho para mascaramento em
+> ambiente não-produtivo. Na prática, é isso mesmo que se usa, e o que costuma dar errado?"
+
+### Do Always Free para produção, qual é o caminho?
+
+> "Hoje rodamos em Autonomous Always Free. Para uma clínica real com dado de paciente, qual
+> é o salto — de configuração, de custo e de conformidade?"
+
+**Por que perguntar:** é a ponte entre projeto acadêmico e produto, e eles sabem exatamente
+onde as pessoas tropeçam.
+
+---
+
+## 4. Feedback direto
 
 ### O que não ficou claro?
 
-Pergunta aberta, feita cedo no tempo de feedback — não no último minuto, quando já não dá
-para aprofundar.
+Faça cedo no tempo de feedback, não no último minuto.
 
-### Se vocês fossem o comprador, que pergunta fariam que a gente não soube responder?
+### Que pergunta vocês fariam que a gente não soube responder?
 
-**Por que perguntar:** é a forma mais rápida de descobrir o buraco do pitch. Muito melhor
-ouvir isso hoje do que na banca final.
+A forma mais rápida de achar o buraco do pitch — muito melhor ouvir hoje que na banca final.
 
 ---
 
-## 6. Próxima fase
+## 5. Próxima fase
 
 ### Faltam 12 dias até 08/09. Onde eles rendem mais?
 
 > "As opções são: conectar um segundo ERP, começar a camada de prevenção de glosa, ou
-> aprofundar a identificação com dado mais realista. O que vocês acham que fortalece mais a
-> entrega?"
+> aprofundar a identificação. O que fortalece mais a entrega?"
 
-**Por que perguntar:** é a pergunta mais acionável da lista. A resposta vira o backlog de
-amanhã.
+A resposta vira o backlog de amanhã.
 
 ---
 
-## O que NÃO perguntar
+## Guardar para outra banca
+
+Estas são boas perguntas, mas **de mercado** — a banca da Oracle não é o melhor público para
+elas. Guarde para a mentoria com perfil de negócio:
+
+- Se o hospital consegue de fato liberar a API do MV ou do Tasy
+- Se a RNDS torna a Sutura redundante
+- Como se cobra: por leito, por paciente, por integração
+- Quem assina o contrato e qual o ciclo de venda
+
+---
+
+## O que não perguntar
 
 - **"O que vocês acharam?"** — convida elogio educado, não informação.
-- **"Vocês usariam?"** — todo mundo diz que sim numa mentoria, e não custa nada dizer.
-- **Qualquer coisa que o Google responda** — o que é FHIR, o que é LGPD, quanto vale o
-  mercado de healthtech. Gasta o tempo escasso deles com o que a gente consegue sozinho.
-- **Perguntas sobre a nota** — a mentoria é para o produto.
+- **"Vocês usariam?"** — todo mundo diz que sim numa mentoria.
+- **O que a documentação da Oracle responde** — o que é Autonomous, o que é OCI. Gasta o
+  tempo escasso deles com o que a gente lê sozinho.
+- **Perguntas sobre a nota.**
 
 ---
 
-## Uma dica sobre como ouvir
+## Como ouvir
 
-Quando a resposta for desconfortável, **anote em vez de defender**. O reflexo natural é
-explicar por que o mentor está enganado — e isso encerra a conversa exatamente onde ela
-ficaria útil. "Interessante, me conta mais" extrai três vezes mais que "é, mas a gente
-pensou nisso porque...".
+Quando a resposta for desconfortável, **anote em vez de defender**. O reflexo de explicar
+por que o mentor está enganado encerra a conversa exatamente onde ela ficaria útil.
+"Interessante, me conta mais" extrai três vezes mais que "é, mas a gente pensou nisso
+porque...".
+
+Designem **uma pessoa para anotar**, e que não seja quem está respondendo.
