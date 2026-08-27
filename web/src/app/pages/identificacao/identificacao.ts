@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SISTEMAS } from '../../core/sistemas';
 import { Candidato, Recomendacao, SituacaoCampo } from '../../core/models';
 import { Decisao, SuturaStore } from '../../core/sutura-store';
@@ -13,7 +13,11 @@ import { Decisao, SuturaStore } from '../../core/sutura-store';
 export class Identificacao {
   protected readonly store = inject(SuturaStore);
   protected readonly sistemas = SISTEMAS;
-  protected readonly expandido = signal<string | null>(null);
+  /** ?abrir=<id do par> já abre aquele candidato — serve para capturas e links diretos. */
+  private readonly rota = inject(ActivatedRoute);
+  protected readonly expandido = signal<string | null>(
+    this.rota.snapshot.queryParamMap.get('abrir'),
+  );
 
   protected alternar(id: string): void {
     this.expandido.update((atual) => (atual === id ? null : id));
