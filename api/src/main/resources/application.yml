@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: sutura-api
+  datasource:
+    url: ${SUTURA_DB_URL:}
+    username: ${SUTURA_DB_USER:}
+    password: ${SUTURA_DB_PASSWORD:}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+        format_sql: true
+    open-in-view: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+sutura:
+  cors:
+    origem-permitida: http://localhost:4200
+  identificacao:
+    corte-costurar: 90
+    corte-revisar: 70
+
+logging:
+  level:
+    br.com.sutura: DEBUG
