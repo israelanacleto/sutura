@@ -7,6 +7,7 @@ Material da demonstração da Sutura, para a versão **ligada ao Oracle Autonomo
 | Arquivo | O que mostra |
 |---|---|
 | [roteiro-demo.md](roteiro-demo.md) | Roteiro cronometrado de 5 minutos: preparação, falas, cliques na ordem, plano B e as perguntas prováveis com resposta |
+| [glossario.md](glossario.md) | Os termos técnicos do roteiro explicados, cada um com a frase pronta para responder na hora |
 | `01-conexoes.png` | Hub de conexões — MV, Tasy, laboratório e a planilha legada, com os volumes reais do banco |
 | `02-fila-identificacao.png` | A fila no estado inicial, com os oito pares e as três recomendações diferentes |
 | `03-caso-acentuacao.png` | **A imagem mais forte.** O par do Sebastião aberto: `CONCEIÇÃO ROCHA` e `CONCEICAO ROCHA` reconhecidos como o mesmo valor, com os dois originais à vista |
