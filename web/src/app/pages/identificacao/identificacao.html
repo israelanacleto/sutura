@@ -2,11 +2,17 @@
   <header class="page-head">
     <h1>Identificação de pacientes</h1>
     <p class="sub">
-      A Sutura compara os registros que chegam de cada sistema e aponta quais provavelmente
-      são a mesma pessoa. A decisão final é sempre humana — o motor sugere, não costura
-      sozinho.
+      O score é calculado no Oracle, campo a campo, com similaridade de nome por
+      Jaro-Winkler. A decisão final é sempre humana — o motor sugere, não costura sozinho.
     </p>
   </header>
+
+  @if (store.erroFila()) {
+    <div class="falha">
+      <strong>Não foi possível carregar a fila.</strong>
+      Verifique se o backend está no ar em <code>localhost:8080</code>.
+    </div>
+  }
 
   <section class="resumo card">
     <div>
@@ -22,140 +28,166 @@
       <strong>{{ store.separados() }}</strong>
     </div>
     <p class="regra">
-      Critérios: CNS, CPF, data de nascimento, nome da mãe e similaridade do nome.
+      Critérios: CNS, CPF, data de nascimento, nome da mãe e similaridade do nome —
+      comparados sem acento.
     </p>
   </section>
 
+  @if (store.erroDeAcao(); as erro) {
+    <div class="falha surgir">{{ erro }}</div>
+  }
+
   <section class="lista">
-    @for (c of store.fila(); track c.id) {
-      @let decisao = store.decisoes()[c.id];
-
-      @if (decisao) {
-        <article class="card resolvido surgir">
-          <span class="badge" [class.badge-ok]="decisao === 'costurado'" [class.badge-neutro]="decisao === 'separado'">
-            {{ decisao === 'costurado' ? 'Costurado' : 'Mantido separado' }}
-          </span>
-          <span class="nomes">{{ c.ladoA.nome }} · {{ c.ladoB.nome }}</span>
-          @if (decisao === 'costurado' && levaAoHistorico(c.id)) {
-            <a routerLink="/paciente" class="link">Ver histórico unificado →</a>
-          }
-          <button type="button" class="btn btn-sm" (click)="store.desfazer(c.id)">Desfazer</button>
-        </article>
-      } @else {
-        <article class="card candidato" [class.aberto]="expandido() === c.id">
-          <header (click)="alternar(c.id)">
-            <div class="score" [class]="'score ' + classeScore(c.score)">
-              <strong>{{ c.score }}</strong><span>%</span>
-            </div>
-
-            <div class="par">
-              <div class="lado">
-                <span class="badge badge-sistema" [style.background]="sistemas[c.ladoA.sistema].cor">
-                  {{ sistemas[c.ladoA.sistema].sigla }}
-                </span>
-                <div>
-                  <div class="nome">{{ c.ladoA.nome }}</div>
-                  <div class="muted mono">{{ c.ladoA.identificador }} · {{ c.ladoA.unidade }}</div>
-                </div>
-              </div>
-
-              <div class="costura" aria-hidden="true">
-                <svg viewBox="0 0 40 12">
-                  <path
-                    d="M2 6 H38"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-dasharray="4 4"
-                  />
-                </svg>
-              </div>
-
-              <div class="lado">
-                <span class="badge badge-sistema" [style.background]="sistemas[c.ladoB.sistema].cor">
-                  {{ sistemas[c.ladoB.sistema].sigla }}
-                </span>
-                <div>
-                  <div class="nome">{{ c.ladoB.nome }}</div>
-                  <div class="muted mono">{{ c.ladoB.identificador }} · {{ c.ladoB.unidade }}</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="cabecalho-fim">
-              @if (c.novo) {
-                <span class="badge badge-warn">novo</span>
-              }
-              <span class="badge" [class]="'badge ' + classeRecomendacao(c.recomendacao)">
-                {{ rotuloRecomendacao(c.recomendacao) }}
-              </span>
-              <span class="chevron" [class.girado]="expandido() === c.id">⌄</span>
-            </div>
-          </header>
-
-          @if (expandido() === c.id) {
-            <div class="detalhe surgir">
-              <p class="justificativa">{{ c.justificativa }}</p>
-
-              <table class="comparacao">
-                <thead>
-                  <tr>
-                    <th>Campo</th>
-                    <th>{{ sistemas[c.ladoA.sistema].nome }}</th>
-                    <th class="col-sinal"></th>
-                    <th>{{ sistemas[c.ladoB.sistema].nome }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (campo of c.campos; track campo.campo) {
-                    <tr [class]="campo.situacao">
-                      <th scope="row">{{ campo.campo }}</th>
-                      <td class="mono">{{ campo.a }}</td>
-                      <td class="col-sinal">{{ simbolo(campo.situacao) }}</td>
-                      <td class="mono">{{ campo.b }}</td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-
-              <div class="acoes">
-                @if (c.recomendacao === 'separar') {
-                  <button type="button" class="btn btn-primary" (click)="decidir(c, 'separado')">
-                    São pessoas diferentes
-                  </button>
-                  <button type="button" class="btn" (click)="decidir(c, 'costurado')">
-                    Costurar mesmo assim
-                  </button>
-                } @else {
-                  <button type="button" class="btn btn-primary" (click)="decidir(c, 'costurado')">
-                    Costurar registros
-                  </button>
-                  <button type="button" class="btn" (click)="decidir(c, 'separado')">
-                    São pessoas diferentes
-                  </button>
-                }
-                <span class="muted rastro">
-                  A decisão fica registrada com usuário, data e hora — exigência de auditoria
-                  e LGPD.
-                </span>
-              </div>
-            </div>
-          } @else {
-            <div class="previa muted">
-              {{ c.campos.length }} campos comparados · {{ c.justificativa }}
-            </div>
-          }
-        </article>
-      }
+    @for (d of store.decisoes(); track d.id) {
+      <article class="card resolvido surgir">
+        <span class="badge" [class.badge-ok]="d.acao === 'costurado'" [class.badge-neutro]="d.acao === 'separado'">
+          {{ d.acao === 'costurado' ? 'Costurado' : 'Mantido separado' }}
+        </span>
+        <span class="nomes">{{ d.nomeA }} · {{ d.nomeB }}</span>
+        @if (d.acao === 'costurado' && d.ehDaPacienteDoHistorico) {
+          <a routerLink="/paciente" class="link">Ver histórico unificado →</a>
+        }
+      </article>
     }
 
-    @if (store.pendentes() === 0) {
+    @if (store.carregandoFila() && store.fila().length === 0) {
+      <div class="card carregando"><span class="spinner"></span> Consultando o motor no banco…</div>
+    }
+
+    @for (c of store.fila(); track c.id) {
+      <article class="card candidato" [class.aberto]="expandido() === c.id">
+        <header (click)="alternar(c.id)">
+          <div class="score" [class]="'score ' + classeScore(c.score)">
+            <strong>{{ c.score }}</strong><span>%</span>
+          </div>
+
+          <div class="par">
+            <div class="lado">
+              <span class="badge badge-sistema" [style.background]="sistemas[c.ladoA.sistema].cor">
+                {{ sistemas[c.ladoA.sistema].sigla }}
+              </span>
+              <div>
+                <div class="nome">{{ c.ladoA.nome }}</div>
+                <div class="muted mono">{{ c.ladoA.identificador }} · {{ c.ladoA.unidade }}</div>
+              </div>
+            </div>
+
+            <div class="costura" aria-hidden="true">
+              <svg viewBox="0 0 40 12">
+                <path
+                  d="M2 6 H38"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-dasharray="4 4"
+                />
+              </svg>
+            </div>
+
+            <div class="lado">
+              <span class="badge badge-sistema" [style.background]="sistemas[c.ladoB.sistema].cor">
+                {{ sistemas[c.ladoB.sistema].sigla }}
+              </span>
+              <div>
+                <div class="nome">{{ c.ladoB.nome }}</div>
+                <div class="muted mono">{{ c.ladoB.identificador }} · {{ c.ladoB.unidade }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cabecalho-fim">
+            <span class="badge" [class]="'badge ' + classeRecomendacao(c.recomendacao)">
+              {{ rotuloRecomendacao(c.recomendacao) }}
+            </span>
+            <span class="chevron" [class.girado]="expandido() === c.id">⌄</span>
+          </div>
+        </header>
+
+        @if (expandido() === c.id) {
+          <div class="detalhe surgir">
+            <p class="justificativa">{{ c.justificativa }}</p>
+
+            <table class="comparacao">
+              <thead>
+                <tr>
+                  <th>Campo</th>
+                  <th>{{ sistemas[c.ladoA.sistema].nome }}</th>
+                  <th class="col-sinal"></th>
+                  <th>{{ sistemas[c.ladoB.sistema].nome }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (campo of c.campos; track campo.campo) {
+                  <tr [class]="campo.situacao">
+                    <th scope="row">{{ campo.campo }}</th>
+                    <td class="mono">{{ campo.a }}</td>
+                    <td class="col-sinal">{{ simbolo(campo.situacao) }}</td>
+                    <td class="mono">{{ campo.b }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+
+            <div class="acoes">
+              @if (c.recomendacao === 'separar') {
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  [disabled]="store.decidindo() === c.id"
+                  (click)="decidir(c, 'separado')"
+                >
+                  São pessoas diferentes
+                </button>
+                <button
+                  type="button"
+                  class="btn"
+                  [disabled]="store.decidindo() === c.id"
+                  (click)="decidir(c, 'costurado')"
+                >
+                  Costurar mesmo assim
+                </button>
+              } @else {
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  [disabled]="store.decidindo() === c.id"
+                  (click)="decidir(c, 'costurado')"
+                >
+                  @if (store.decidindo() === c.id) {
+                    <span class="spinner"></span> Gravando…
+                  } @else {
+                    Costurar registros
+                  }
+                </button>
+                <button
+                  type="button"
+                  class="btn"
+                  [disabled]="store.decidindo() === c.id"
+                  (click)="decidir(c, 'separado')"
+                >
+                  São pessoas diferentes
+                </button>
+              }
+              <span class="muted rastro">
+                A decisão é gravada com usuário, data e hora — exigência de auditoria e LGPD.
+              </span>
+            </div>
+          </div>
+        } @else {
+          <div class="previa muted">
+            {{ c.campos.length }} campos comparados · {{ c.justificativa }}
+          </div>
+        }
+      </article>
+    }
+
+    @if (!store.carregandoFila() && store.pendentes() === 0) {
       <div class="card vazio surgir">
         <strong>Fila zerada.</strong>
         <span class="muted">
           Todos os registros recebidos foram avaliados. Novos pares aparecem aqui a cada
-          sincronização.
+          ingestão.
         </span>
       </div>
     }

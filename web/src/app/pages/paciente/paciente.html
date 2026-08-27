@@ -4,8 +4,7 @@
       <h1>Histórico unificado</h1>
       @if (modo() === 'depois') {
         <p class="sub">
-          Um único histórico costurado a partir de {{ paciente().fontes.length }} sistemas de
-          origem.
+          Um único histórico costurado a partir de {{ fontes().length }} sistemas de origem.
         </p>
       } @else {
         <p class="sub">
@@ -36,156 +35,156 @@
     </div>
   </header>
 
-  <!-- ---------------- ficha da paciente ----------------
-       Só existe na visão unificada: antes da costura, esse cadastro único
-       não existe em sistema nenhum. -->
-
-  @if (modo() === 'depois') {
-  <section class="card ficha">
-    <div class="identidade">
-      <div class="avatar">{{ paciente().nome.charAt(0) }}</div>
-      <div>
-        <h2>{{ paciente().nome }}</h2>
-        <div class="muted">
-          {{ paciente().idade }} anos · nascida em {{ paciente().nascimento }}
-        </div>
-      </div>
+  @if (store.erroPaciente()) {
+    <div class="falha">
+      <strong>Não foi possível carregar o paciente.</strong>
+      Verifique se o backend está no ar em <code>localhost:8080</code>.
     </div>
-
-    <dl>
-      <div>
-        <dt>CNS</dt>
-        <dd class="mono">{{ paciente().cns }}</dd>
-      </div>
-      <div>
-        <dt>CPF</dt>
-        <dd class="mono">{{ paciente().cpf }}</dd>
-      </div>
-      <div>
-        <dt>Convênio</dt>
-        <dd>{{ paciente().convenio }}</dd>
-      </div>
-      <div>
-        <dt>Carteirinha</dt>
-        <dd class="mono">{{ paciente().carteirinha }}</dd>
-      </div>
-    </dl>
-
-    <div class="diagnostico">
-      <div class="eyebrow">Condição em acompanhamento</div>
-      <div>{{ paciente().diagnostico }}</div>
-    </div>
-  </section>
   }
 
-  @if (modo() === 'depois') {
-    <!-- ---------------- visão unificada ---------------- -->
+  @if (store.carregandoPaciente() && !paciente()) {
+    <div class="card carregando"><span class="spinner"></span> Montando o histórico…</div>
+  }
 
-    <section class="insight surgir">
-      <div class="insight-marca">Padrão detectado</div>
-      <p>
-        <strong>{{ infusoes() }} infusões com intervalo exato de 28 dias</strong> entre
-        27/03/2026 e 14/08/2026. Não são {{ infusoes() }} atendimentos avulsos — é
-        <strong>um tratamento contínuo</strong>, ciclo 6 de 8. Próxima infusão prevista para
-        <strong>11/09/2026</strong>.
-      </p>
-      <p class="insight-rodape">
-        Sem a costura, esses ciclos estão divididos entre o Tasy (aplicação), o MV (consultas
-        e cirurgia) e o laboratório (exames de controle) — e nenhum dos três enxerga a
-        sequência inteira.
-      </p>
-    </section>
-
-    <div class="filtros">
-      <span class="eyebrow">Fontes costuradas</span>
-      @for (id of paciente().fontes; track id) {
-        <button
-          type="button"
-          class="chip"
-          [class.desligado]="oculto(id)"
-          [style.--cor]="sistemas[id].cor"
-          (click)="alternarSistema(id)"
-        >
-          <span class="dot"></span>
-          {{ sistemas[id].nome }}
-          <span class="qtd">{{ contarNoSistema(id) }}</span>
-        </button>
-      }
-      <span class="muted total">
-        {{ eventos().length }} de {{ paciente().eventos.length }} eventos exibidos
-      </span>
-    </div>
-
-    <ol class="linha-tempo">
-      @for (e of eventos(); track e.id) {
-        <li [class.destaque]="destacado(e)">
-          <div class="data">{{ e.data }}</div>
-          <div class="marcador" [style.background]="sistemas[e.sistema].cor"></div>
-          <article class="card evento">
-            <header>
-              <h3>{{ e.titulo }}</h3>
-              @if (e.ciclo) {
-                <span class="badge badge-neutro">{{ e.ciclo }}</span>
-              }
-              <span class="badge badge-sistema" [style.background]="sistemas[e.sistema].cor">
-                {{ sistemas[e.sistema].sigla }}
-              </span>
-            </header>
-            <div class="meta muted">
-              {{ rotuloCategoria(e.categoria) }} · {{ e.unidade }}
-            </div>
-            <p>{{ e.detalhe }}</p>
-          </article>
-        </li>
-      }
-    </ol>
-  } @else {
-    <!-- ---------------- visão fragmentada ---------------- -->
-
-    <section class="alerta-fragmentado surgir">
-      <strong>{{ paciente().cadastros.length }} cadastros distintos para a mesma pessoa.</strong>
-      Cada sistema conhece apenas o próprio pedaço do histórico — e nenhum deles sabe que os
-      outros existem. É assim que a mesma paciente repete exame, reconta a história e o
-      faturamento sai errado.
-    </section>
-
-    <div class="colunas surgir">
-      @for (grupo of porSistema(); track grupo.cadastro.sistema) {
-        <section class="card coluna">
-          <header [style.border-top-color]="sistemas[grupo.cadastro.sistema].cor">
-            <span
-              class="badge badge-sistema"
-              [style.background]="sistemas[grupo.cadastro.sistema].cor"
-            >
-              {{ sistemas[grupo.cadastro.sistema].sigla }}
-            </span>
-            <div class="unidade">{{ grupo.cadastro.unidade }}</div>
-            <div class="nome-registro">{{ grupo.cadastro.nome }}</div>
-            <div class="mono muted">{{ grupo.cadastro.identificador }}</div>
-            <div class="mono muted">CNS {{ grupo.cadastro.cns }}</div>
-            <div class="mono muted">CPF {{ grupo.cadastro.cpf }}</div>
-          </header>
-
-          <div class="contagem">
-            {{ grupo.eventos.length }} de {{ paciente().eventos.length }} eventos
-            <span class="muted">— o restante está invisível para este sistema</span>
+  @if (paciente(); as p) {
+    @if (modo() === 'depois') {
+      <section class="card ficha">
+        <div class="identidade">
+          <div class="avatar">{{ p.nome.charAt(0) }}</div>
+          <div>
+            <h2>{{ p.nome }}</h2>
+            <div class="muted">{{ p.idade }} anos · nascida em {{ p.nascimento }}</div>
           </div>
+        </div>
 
-          <ul>
-            @for (e of grupo.eventos; track e.id) {
-              <li>
-                <span class="mono">{{ e.data }}</span>
-                <span>{{ e.titulo }}</span>
-              </li>
-            }
-          </ul>
+        <dl>
+          <div>
+            <dt>CNS</dt>
+            <dd class="mono">{{ p.cns }}</dd>
+          </div>
+          <div>
+            <dt>CPF</dt>
+            <dd class="mono">{{ p.cpf }}</dd>
+          </div>
+          <div>
+            <dt>Convênio</dt>
+            <dd>{{ p.convenio }}</dd>
+          </div>
+          <div>
+            <dt>Carteirinha</dt>
+            <dd class="mono">{{ p.carteirinha }}</dd>
+          </div>
+        </dl>
+
+        <div class="diagnostico">
+          <div class="eyebrow">Condição em acompanhamento</div>
+          <div>{{ p.diagnostico }}</div>
+        </div>
+      </section>
+
+      @if (infusoes() > 1) {
+        <section class="insight surgir">
+          <div class="insight-marca">Padrão detectado</div>
+          <p>
+            <strong>{{ infusoes() }} infusões com intervalo de 28 dias</strong> entre
+            {{ primeiraInfusao() }} e {{ ultimaInfusao() }}. Não são {{ infusoes() }}
+            atendimentos avulsos — é <strong>um tratamento contínuo</strong>. Próxima
+            infusão projetada para <strong>{{ proximaInfusao() }}</strong>.
+          </p>
+          <p class="insight-rodape">
+            Sem a costura, esses ciclos ficam divididos entre os sistemas de origem, e
+            nenhum deles enxerga a sequência inteira.
+          </p>
         </section>
       }
-    </div>
 
-    <p class="rodape-fragmentado">
-      <a routerLink="/identificacao">Ir para a fila de identificação</a> para costurar esses
-      cadastros, ou volte para <button type="button" class="link" (click)="modo.set('depois')">a visão unificada</button>.
-    </p>
+      <div class="filtros">
+        <span class="eyebrow">Fontes costuradas</span>
+        @for (id of fontes(); track id) {
+          <button
+            type="button"
+            class="chip"
+            [class.desligado]="oculto(id)"
+            [style.--cor]="sistemas[id].cor"
+            (click)="alternarSistema(id)"
+          >
+            <span class="dot"></span>
+            {{ sistemas[id].nome }}
+            <span class="qtd">{{ contarNoSistema(id) }}</span>
+          </button>
+        }
+        <span class="muted total">
+          {{ eventos().length }} de {{ todosOsEventos().length }} eventos exibidos
+        </span>
+      </div>
+
+      <ol class="linha-tempo">
+        @for (e of eventos(); track e.id) {
+          <li [class.destaque]="destacado(e)">
+            <div class="data">{{ e.data }}</div>
+            <div class="marcador" [style.background]="sistemas[e.sistema].cor"></div>
+            <article class="card evento">
+              <header>
+                <h3>{{ e.titulo }}</h3>
+                @if (e.ciclo) {
+                  <span class="badge badge-neutro">{{ e.ciclo }}</span>
+                }
+                <span class="badge badge-sistema" [style.background]="sistemas[e.sistema].cor">
+                  {{ sistemas[e.sistema].sigla }}
+                </span>
+              </header>
+              <div class="meta muted">
+                {{ rotuloCategoria(e.categoria) }} · {{ e.unidade }}
+              </div>
+              <p>{{ e.detalhe }}</p>
+            </article>
+          </li>
+        }
+      </ol>
+    } @else {
+      <section class="alerta-fragmentado surgir">
+        <strong>{{ porSistema().length }} cadastros distintos para a mesma pessoa.</strong>
+        Cada sistema conhece apenas o próprio pedaço do histórico — e nenhum deles sabe que
+        os outros existem. É assim que a mesma paciente repete exame, reconta a história e o
+        faturamento sai errado.
+      </section>
+
+      <div class="colunas surgir">
+        @for (grupo of porSistema(); track grupo.sistema) {
+          <section class="card coluna">
+            <header [style.border-top-color]="sistemas[grupo.sistema].cor">
+              <span class="badge badge-sistema" [style.background]="sistemas[grupo.sistema].cor">
+                {{ sistemas[grupo.sistema].sigla }}
+              </span>
+              <div class="unidade">{{ grupo.unidade }}</div>
+              <div class="nome-registro">{{ grupo.nome }}</div>
+              <div class="mono muted">{{ grupo.identificador }}</div>
+              <div class="mono muted">CNS {{ grupo.cns }}</div>
+              <div class="mono muted">CPF {{ grupo.cpf }}</div>
+            </header>
+
+            <div class="contagem">
+              {{ grupo.eventos.length }} de {{ todosOsEventos().length }} eventos
+              <span class="muted">— o restante está invisível para este sistema</span>
+            </div>
+
+            <ul>
+              @for (e of grupo.eventos; track e.id) {
+                <li>
+                  <span class="mono">{{ e.data }}</span>
+                  <span>{{ e.titulo }}</span>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+      </div>
+
+      <p class="rodape-fragmentado">
+        <a routerLink="/identificacao">Ir para a fila de identificação</a> para costurar esses
+        cadastros, ou volte para
+        <button type="button" class="link" (click)="modo.set('depois')">a visão unificada</button>.
+      </p>
+    }
   }
 </div>
