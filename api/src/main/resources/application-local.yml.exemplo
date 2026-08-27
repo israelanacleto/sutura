@@ -1,0 +1,13 @@
+# Copie para application-local.yml (que está no .gitignore) e preencha.
+# Rode com: mvn spring-boot:run -Dspring-boot.run.profiles=local
+#
+# Autonomous Database com wallet (mTLS):
+#   1. Descompacte a wallet em, por exemplo, F:\PJ\FIAP\Sutura\.wallet
+#   2. O alias (suturadb_high) está no tnsnames.ora dentro da wallet
+#   3. TNS_ADMIN aponta para a pasta da wallet
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@suturadb_high?TNS_ADMIN=F:/PJ/FIAP/Sutura/.wallet
+    username: SUTURA
+    password: TROQUE_AQUI

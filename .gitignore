@@ -1,2 +1,9 @@
 # ferramentas locais
 .claude/
+
+# wallet do Oracle ADB e credenciais
+.wallet/
+api/src/main/resources/application-local.yml
+
+# build do backend
+api/target/
