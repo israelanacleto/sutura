@@ -16,9 +16,12 @@ api/scripts/reset-demo.sql
 ```
 
 Rode pelo SQL Worksheet do console OCI (*Database actions → SQL*) ou por linha de comando.
-Ao final ele imprime a conferência — o esperado é **15 registros, 1 vínculo, 0 decisões,
-12 eventos**. Sem isso, o botão "Sincronizar" não traz nada novo e a linha do tempo já
-nasce completa, matando os dois melhores momentos da apresentação.
+Ao final ele imprime a conferência — o esperado é **15 registros, 1 vínculo, 1 paciente
+mestre, 0 decisões, 12 eventos**. Sem isso, o botão "Sincronizar" não traz nada novo e a
+linha do tempo já nasce completa, matando os dois melhores momentos da apresentação.
+
+Confira o número de pacientes mestres: se vier maior que 1, sobraram registros de uma
+demonstração anterior.
 
 **2. Subir as duas pontas:**
 
@@ -101,9 +104,18 @@ cd F:\PJ\FIAP\Sutura\web && npm start
 > "E a decisão fica gravada com usuário, data e hora — inclusive a de separar. Auditoria
 > clínica e LGPD exigem poder responder quem decidiu o quê, e quando."
 
-### Beat 3 — costurar a Maria (~20s)
+### Beat 3 — costurar a Maria (~25s)
 
-**Ação:** costurar os **dois** pares da Maria Aparecida (MV × Tasy e MV × Lab).
+A Maria Aparecida aparece em **três** pares: MV × Tasy, MV × Lab e Tasy × Lab.
+
+**Ação:** costurar os dois primeiros — **MV × Tasy** e **MV × Lab**.
+
+Ao costurar o segundo, o terceiro par **desaparece sozinho da fila**. Vale apontar:
+
+> "Repare que sobrou um par da Maria e ele sumiu sem eu tocar. Depois que os três
+> registros passam a apontar para a mesma pessoa, não há mais o que decidir — o banco
+> tira o par da fila sozinho. É a diferença entre uma lista de sugestões e um sistema
+> que sabe o que já resolveu."
 
 **Ação:** clicar em **Ver histórico unificado →**.
 
@@ -153,12 +165,27 @@ cd F:\PJ\FIAP\Sutura\web && npm start
 - **"Sincronizar" responde "Nada novo":** o lote já foi ingerido. Rode o `reset-demo.sql`.
 - **A fila está vazia:** mesma coisa, rode o reset.
 - **Nada sobe a tempo:** as capturas em `docs/apresentacao` são o plano B.
+- **Você errou o clique e costurou o par errado:** rode o `reset-demo.sql` e recomece. Não
+  existe desfazer pela interface — a decisão é auditada, e apagar auditoria por um botão
+  seria pior que refazer a demonstração.
+
+## Atalhos úteis
+
+Duas telas abrem em estados específicos por URL, o que ajuda se você precisar retomar um
+ponto do roteiro sem refazer os cliques:
+
+- `localhost:4200/identificacao?abrir=<par>` — abre um candidato já expandido. O
+  identificador é o par de ids dos dois registros, separado por hífen, e sai da API:
+  `curl -s localhost:8080/v1/candidatos` devolve o campo `id` de cada par. Foi feito para
+  as capturas; em apresentação serve para retomar um caso específico.
+- `localhost:4200/paciente?modo=antes` — abre direto na visão fragmentada, se você quiser
+  começar pelo "antes" e depois virar para o "depois".
 
 ## Perguntas prováveis
 
-**"Só 17 registros?"**
-É o lote de demonstração, não um teste de carga. O motor é o mesmo para dezessete ou para
-cento e vinte mil — a comparação roda no banco, com blocking por CNS, CPF, data de
+**"Só quinze registros?"**
+São quinze no estado inicial e dezessete depois da ingestão — é o lote de demonstração,
+não um teste de carga. O motor é o mesmo para dezessete ou para cento e vinte mil — a comparação roda no banco, com blocking por CNS, CPF, data de
 nascimento e SOUNDEX do nome para não virar produto cartesiano.
 
 **"E quando não há CNS nem CPF?"**
