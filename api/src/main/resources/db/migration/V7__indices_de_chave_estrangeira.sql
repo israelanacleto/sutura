@@ -1,9 +1,10 @@
 -- Índices para chaves estrangeiras que não tinham nenhum.
 --
 -- Contexto honesto: estes índices foram criados enquanto se investigava um
--- ORA-12860 no script de reset da demonstração, e NÃO foram a solução daquele
--- problema — a causa era outra (duas FKs para a mesma tabela pai sendo resolvidas
--- na mesma transação; ver o comentário em scripts/reset-demo.sql).
+-- ORA-12860 no script de reset da demonstração, e NÃO resolveram aquele problema
+-- — o que resolveu foi fechar a transação entre os passos do script. A causa raiz
+-- do ORA-12860 não chegou a ser confirmada; ver o comentário em
+-- scripts/reset-demo.sql, que separa o observado da hipótese.
 --
 -- Ainda assim eles ficam, porque o problema que resolvem é real e independente:
 -- no Oracle, apagar uma linha da tabela pai exige verificar se há filhas

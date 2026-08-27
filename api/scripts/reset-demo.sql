@@ -14,17 +14,25 @@
 --   sql ADMIN/senha@suturadb_high @reset-demo.sql
 -- ou cole no SQL Worksheet do console OCI (Database actions > SQL).
 
--- Os COMMIT entre os passos NÃO são decorativos.
---
--- decisao_identificacao tem duas chaves estrangeiras para a mesma tabela pai
--- (registro_a_id e registro_b_id). Apagando as filhas e as pais na MESMA transação, o
--- Oracle precisa travar as entradas de índice das duas constraints para as mesmas linhas
--- e acaba esbarrando no próprio bloqueio:
+-- Os COMMIT entre os passos NÃO são decorativos. Sem eles, o script falha em:
 --
 --   ORA-12860: deadlock detected while waiting for a sibling row lock
 --
--- Não é contenção com a aplicação — acontece igual com tudo parado. Fechar a transação
--- antes de apagar as linhas pai elimina o conflito.
+-- O que foi observado, e é verificável repetindo os passos:
+--   · o erro ocorre sempre no DELETE das linhas de registro_origem, depois que as tabelas
+--     filhas foram esvaziadas na mesma transação;
+--   · acontece igualmente com a aplicação parada, então não é contenção com outra sessão;
+--   · criar os índices que faltavam nas chaves estrangeiras (migration V7) NÃO resolveu;
+--   · fechar a transação antes de apagar as linhas pai resolve.
+--
+-- A hipótese para a causa — e é hipótese, não diagnóstico: decisao_identificacao tem duas
+-- chaves estrangeiras apontando para a mesma tabela pai (registro_a_id e registro_b_id),
+-- e resolver as duas na mesma transação em que as filhas foram apagadas leva a sessão a
+-- esbarrar no próprio bloqueio. Não confirmamos isso em trace nem com um DBA — chegamos
+-- ao COMMIT pelo comportamento observado.
+--
+-- Se algum dia isso for investigado a sério, o caminho é o trace da sessão e a
+-- DBA_BLOCKERS/V$LOCK no momento do erro.
 
 -- 1. Auditoria de decisões
 DELETE FROM decisao_identificacao;
