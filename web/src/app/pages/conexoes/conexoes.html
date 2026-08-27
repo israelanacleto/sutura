@@ -1,0 +1,94 @@
+<div class="page">
+  <header class="page-head">
+    <h1>Conexões</h1>
+    <p class="sub">
+      Sistemas de origem ligados à camada Sutura. Nada é substituído — cada ERP continua
+      operando, a Sutura apenas lê, normaliza e costura.
+    </p>
+  </header>
+
+  <section class="kpis">
+    <div class="card kpi">
+      <div class="eyebrow">Sistemas conectados</div>
+      <div class="kpi-valor">{{ store.conectados() }}<span>/{{ store.conexoes().length }}</span></div>
+      <div class="kpi-nota">MV, Tasy, laboratório e planilha legada</div>
+    </div>
+    <div class="card kpi">
+      <div class="eyebrow">Registros sincronizados</div>
+      <div class="kpi-valor">{{ store.totalRegistros() | number: '1.0-0' }}</div>
+      <div class="kpi-nota">Prontuários, atendimentos, exames e guias</div>
+    </div>
+    <div class="card kpi">
+      <div class="eyebrow">Pendentes de identificação</div>
+      <div class="kpi-valor destaque">{{ store.pendentes() }}</div>
+      <div class="kpi-nota">Registros que podem ser o mesmo paciente</div>
+    </div>
+  </section>
+
+  @if (novosDetectados()) {
+    <div class="aviso-sync surgir">
+      <span class="dot"></span>
+      <span>
+        A sincronização trouxe <strong>2 novos pares</strong> de registros suspeitos de serem
+        o mesmo paciente.
+      </span>
+      <a routerLink="/identificacao">Ver fila de identificação →</a>
+    </div>
+  }
+
+  <section class="grade">
+    @for (c of store.conexoes(); track c.id) {
+      <article class="card conexao">
+        <header>
+          <span class="badge badge-sistema" [style.background]="sistemas[c.id].cor">
+            {{ sistemas[c.id].sigla }}
+          </span>
+          <div class="titulo">
+            <h3>{{ c.nome }}</h3>
+            <div class="muted">{{ c.fornecedor }}</div>
+          </div>
+          <span class="badge" [class]="'badge ' + classeStatus(c.status)">
+            <span class="dot"></span>{{ rotuloStatus(c.status) }}
+          </span>
+        </header>
+
+        <dl>
+          <div>
+            <dt>Unidade</dt>
+            <dd>{{ c.unidade }}</dd>
+          </div>
+          <div>
+            <dt>Protocolo</dt>
+            <dd class="mono">{{ c.protocolo }}</dd>
+          </div>
+          <div>
+            <dt>Última sincronização</dt>
+            <dd>{{ c.ultimaSync }}</dd>
+          </div>
+          <div>
+            <dt>Registros</dt>
+            <dd>{{ c.registros | number: '1.0-0' }}</dd>
+          </div>
+        </dl>
+
+        <p class="observacao">{{ c.observacao }}</p>
+
+        <footer>
+          <button
+            type="button"
+            class="btn btn-sm btn-primary"
+            [disabled]="!!store.sincronizando()"
+            (click)="store.sincronizar(c.id)"
+          >
+            @if (sincronizando(c)) {
+              <span class="spinner"></span> Sincronizando…
+            } @else {
+              Sincronizar agora
+            }
+          </button>
+          <span class="muted mono">endpoint /v1/ingest/{{ c.id }}</span>
+        </footer>
+      </article>
+    }
+  </section>
+</div>
