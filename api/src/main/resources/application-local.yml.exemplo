@@ -1,47 +1,44 @@
 # Copie este arquivo para application-local.yml (que está no .gitignore) e preencha.
+#
+#   cp application-local.yml.exemplo application-local.yml
+#
 # Rode com: mvn spring-boot:run -Dspring-boot.run.profiles=local
 #
 # ---------------------------------------------------------------------------
-# Caminho A — TLS simples, SEM wallet  (recomendado)
+# ATENÇÃO AO CAMINHO DA WALLET
 # ---------------------------------------------------------------------------
-# Funciona porque o Autonomous Database foi criado com "Require mutual TLS (mTLS)
-# authentication" DESLIGADO. Pegue a string em:
-#   Console OCI > Autonomous AI Database > Sutura > Database connection
-#   > Connection strings > TLS  (não "Mutual TLS")
+# TNS_ADMIN precisa apontar para a pasta .wallet do SEU clone do repositório. O caminho
+# abaixo é um exemplo de uma máquina Windows — troque pelo seu. Use barras normais (/),
+# que funcionam nos dois sistemas, e caminho absoluto: o JDBC não resolve caminho relativo
+# ao diretório do projeto.
 #
-# Use o serviço _high para a aplicação. A string tem este formato:
+#   Windows: F:/PJ/FIAP/Sutura/.wallet
+#   Linux:   /home/israel/projetos/sutura/.wallet
 #
-#   jdbc:oracle:thin:@(description=(retry_count=20)(retry_delay=3)
-#     (address=(protocol=tcps)(port=1521)(host=adb.sa-saopaulo-1.oraclecloud.com))
-#     (connect_data=(service_name=<identificador>_suturadb_high.adb.oraclecloud.com))
-#     (security=(ssl_server_dn_match=yes)))
-#
-# Cole tudo em UMA linha só, sem quebras.
+# A wallet vem do console OCI, em Database connection > Download wallet, descompactada.
+# O alias suturadb_high está no tnsnames.ora de dentro dela.
 
 spring:
   datasource:
-    url: jdbc:oracle:thin:@COLE_AQUI_A_STRING_TLS
+    url: jdbc:oracle:thin:@suturadb_high?TNS_ADMIN=TROQUE/PELO/CAMINHO/DO/SEU/.wallet
     username: ADMIN
-    password: SENHA_DO_ADMIN
+    password: TROQUE_PELA_SENHA_DO_ADMIN
 
 # ---------------------------------------------------------------------------
-# Caminho B — mTLS com wallet  (plano B)
+# Alternativa sem wallet
 # ---------------------------------------------------------------------------
-# Só é necessário se o mTLS for exigido. Baixe a wallet em Database connection >
-# Download wallet, descompacte em F:\PJ\FIAP\Sutura\.wallet (já está no .gitignore)
-# e use:
+# Se o banco tiver sido criado com ACL de rede (lista de IPs permitidos), o console
+# oferece uma string de conexão TLS simples, sem wallet, em Database connection >
+# Connection strings > TLS. Nesse caso basta:
 #
-# spring:
-#   datasource:
-#     url: jdbc:oracle:thin:@suturadb_high?TNS_ADMIN=F:/PJ/FIAP/Sutura/.wallet
-#     username: ADMIN
-#     password: SENHA_DO_ADMIN
+#   url: jdbc:oracle:thin:@(description=(retry_count=20)(retry_delay=3)(address=...))
 #
-# Neste caminho a dependência oraclepki do pom.xml passa a ser obrigatória.
+# Com "Secure access from everywhere" sem ACL, como está hoje, só mTLS é oferecido —
+# então a wallet é obrigatória.
 
 # ---------------------------------------------------------------------------
 # Aviso
 # ---------------------------------------------------------------------------
-# A senha do ADMIN não vai para o git em hipótese nenhuma. application-local.yml
-# está no .gitignore. Se precisar compartilhar com o grupo, mande a senha por um
-# canal separado — nunca no repositório, nunca no chat do trabalho.
+# A senha do ADMIN não vai para o git em hipótese nenhuma: application-local.yml está no
+# .gitignore. Para compartilhar com o time, use um canal separado — nunca o repositório,
+# nunca o chat do trabalho.

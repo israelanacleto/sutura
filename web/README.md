@@ -1,37 +1,55 @@
-# Sutura — protótipo navegável
+# Sutura — front-end
 
-Protótipo de front-end da Sutura, a camada de integração que se conecta por cima dos ERPs
-de saúde existentes. Feito para a mentoria 2 do challenge (20/08/2026).
+Angular 21, standalone components, zoneless, signals. Sem bibliotecas de UI: todo o CSS é
+próprio, com tokens em `src/styles.css`.
 
 ## Como rodar
 
-```
+```bash
+npm install
 npm start
 ```
 
 Abre em `http://localhost:4200`.
 
-## O que tem aqui
+**Depende do backend.** As telas leem de `http://localhost:8080`; sem ele, aparece o aviso
+de falha de conexão em vez dos dados. A preparação do banco e das credenciais está no
+[README da raiz](../README.md).
+
+## As telas
 
 | Rota | Tela | O que demonstra |
 |---|---|---|
-| `/conexoes` | Hub de conexões | MV, Tasy, laboratório e uma planilha legada como sistemas de origem. Sincronização traz registros novos e alimenta a fila de identificação. |
-| `/identificacao` | Fila de identificação | Pares de registros candidatos a serem a mesma pessoa, com score, comparação campo a campo e recomendação. Inclui um caso de homônimo em que o sistema recomenda **não** costurar. |
-| `/paciente` | Histórico unificado | Linha do tempo única com a origem de cada evento, destaque do tratamento contínuo (infusões a cada 28 dias) e alternador **Antes da Sutura / Com a Sutura**. |
+| `/conexoes` | Hub de conexões | Os sistemas de origem com volume real de registros. O botão *Sincronizar agora* do Tasy dispara uma ingestão FHIR de verdade |
+| `/identificacao` | Fila de identificação | Pares candidatos a serem a mesma pessoa, com score vindo do banco, comparação campo a campo e recomendação. Inclui um homônimo que o sistema recomenda **não** costurar |
+| `/paciente` | Histórico unificado | Linha do tempo com a origem de cada evento e alternador **Antes da Sutura / Com a Sutura** |
 
-O roteiro da apresentação está em [`../docs/apresentacao/roteiro-demo.md`](../docs/apresentacao/roteiro-demo.md).
+Duas rotas aceitam parâmetro, o que ajuda em capturas e na apresentação:
 
-## Estado atual e limites
+- `/identificacao?abrir=<par>` abre um candidato já expandido
+- `/paciente?modo=antes` abre direto na visão fragmentada
 
-- **Sem backend.** Todo o estado vive em memória, em `src/app/core/sutura-store.ts`.
-  Na próxima fase esse serviço é substituído por chamadas ao backend em Java + Spring Boot
-  sobre Oracle Autonomous Database.
-- **Dados fictícios**, com formato realista (CNS, prontuário, CPF, protocolos HL7/FHIR).
+## Como os dados chegam
+
+Tudo passa por `core/sutura-store.ts`, que é o único ponto do front que conhece a origem
+dos dados. Ele usa `httpResource` (experimental desde a 19.2): cada recurso expõe valor,
+carregamento e erro como signals, sem subscribe manual. Um signal de versão invalida as
+consultas depois de cada mutação, então a fila e o histórico se refazem sozinhos após uma
+decisão.
+
+Os componentes não conhecem HTTP. Quando o backend entrou, no lugar dos dados fixos,
+nenhuma tela precisou mudar de estrutura.
+
+`core/sistemas.ts` guarda sigla e cor de cada sistema de origem — decisão de apresentação,
+que não tem por que trafegar pela API a cada requisição.
+
+## Limites conhecidos
+
+- **Sem autenticação.** O usuário gravado na auditoria das decisões é fixo.
+- **Sem desfazer.** Uma decisão registrada não se apaga pela interface: a trilha é
+  auditável de propósito. Para recomeçar uma demonstração, use `api/scripts/reset-demo.sql`.
+- **Dados fictícios**, com formato realista — CNS, prontuário, CPF, protocolos HL7/FHIR.
   Nenhum dado de pessoa real.
-- **Sem autenticação, sem persistência.** Recarregar a página zera o estado — o botão
-  *Reiniciar demonstração* na barra lateral faz o mesmo sem recarregar.
-- O motor de identificação **não** calcula score: os valores são fixos, escolhidos para
-  representar casos reais de record linkage (nome abreviado, CPF ausente, homônimo).
 
 ## Estrutura
 
@@ -39,13 +57,10 @@ O roteiro da apresentação está em [`../docs/apresentacao/roteiro-demo.md`](..
 src/app/
   core/
     models.ts        tipos do domínio
-    mock-data.ts     conexões, candidatos e paciente de exemplo
-    sutura-store.ts  estado da aplicação (signals) — ponto de troca pelo backend
+    sistemas.ts      sigla e cor dos sistemas de origem
+    sutura-store.ts  acesso ao backend, em signals
   pages/
     conexoes/
     identificacao/
     paciente/
 ```
-
-Angular 21, standalone components, zoneless, signals. Sem bibliotecas de UI — todo o CSS é
-próprio, com tokens em `src/styles.css`.

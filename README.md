@@ -48,6 +48,76 @@ Ver `docs/Rich-Picture-Mapa-Stakeholders-Tela-Sutura.pptx`.
 
 Entraram dois novos: **TI/fornecedor do ERP** (a integração depende deles) e a **IA clínica como parceira** (mata o argumento de "ah, isso já existe").
 
+---
+
+# O repositório
+
+| Pasta | O que é |
+|---|---|
+| `api/` | Backend em Java 21 + Spring Boot 3.5 sobre Oracle Autonomous Database |
+| `web/` | Front-end em Angular 21 |
+| `docs/apresentacao/` | Roteiro da demonstração e capturas das telas |
+| `PRD-backend-fase-2.md` | Arquitetura, decisões e critérios de aceite da fase atual |
+
+## O que você precisa instalado
+
+Java 21, Maven 3.8+, Node 22+. Verificado com Temurin 21.0.11, Maven 3.8.6 e Node 22.13.1.
+
+## Antes de rodar pela primeira vez
+
+O backend **não sobe sem banco**. É preciso um Oracle Autonomous Database e as credenciais
+locais, que não estão no repositório — e não devem estar.
+
+**1. Provisionar o banco.** Um Autonomous Database Always Free, workload *Transaction
+Processing*, versão 26ai, acesso *Secure access from everywhere*. O passo a passo da conta
+está em `docs/Criacao-conta-OCI-Parceria-FIAP-Oracle-Academy.pdf`.
+
+**2. Baixar a wallet.** No console: *Database connection → Download wallet*. Descompacte em
+`.wallet/` na raiz do projeto. Essa pasta está no `.gitignore` e nunca vai para o git.
+
+**3. Criar o arquivo de credenciais.** Copie o exemplo e preencha a senha do ADMIN:
+
+```bash
+cp api/src/main/resources/application-local.yml.exemplo api/src/main/resources/application-local.yml
+```
+
+O arquivo também está no `.gitignore`. A senha do ADMIN não trafega pelo repositório —
+combine por outro canal com quem for rodar.
+
+**4. Criar o schema.** As migrations rodam sozinhas na subida da aplicação. Para rodar
+antes, sem subir o backend:
+
+```bash
+cd api && mvn flyway:migrate -Dflyway.locations=filesystem:src/main/resources/db/migration -Dflyway.baselineOnMigrate=true -Dflyway.baselineVersion=0
+```
+
+O `baselineVersion=0` é obrigatório: o schema `ADMIN` do Autonomous nunca está vazio, e com
+o padrão o Flyway pularia a criação das tabelas.
+
+## Como rodar
+
+```bash
+cd api && mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+```bash
+cd web && npm install && npm start
+```
+
+Backend em `http://localhost:8080`, front em `http://localhost:4200`. O front depende do
+backend: sem ele, as telas mostram o aviso de falha de conexão.
+
+## Antes de apresentar
+
+Restaure o estado da demonstração com `api/scripts/reset-demo.sql`. O roteiro completo,
+com os cliques e as falas, está em
+[`docs/apresentacao/roteiro-demo.md`](docs/apresentacao/roteiro-demo.md).
+
+## O que ainda não existe
+
+Autenticação, deploy, ingestão dos outros ERPs e a camada de prevenção de glosa — que é o
+terceiro pilar do pitch e segue intocado. Está tudo declarado como fora de escopo no PRD.
+
 ## Docs
 
 - `docs/Criacao-conta-OCI-Parceria-FIAP-Oracle-Academy.pdf` — passo a passo de criação da conta na OCI (parceria FIAP-Oracle Academy).
