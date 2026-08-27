@@ -215,10 +215,23 @@ superior direito** da tela, na mesma altura do título. *(o momento da virada)*
 > de glosa. E, com dado limpo e unificado, alimentar ferramentas clínicas de IA como a
 > Sofya, que hoje recebem dado sujo e fragmentado."
 
+**Para esta banca, acrescente** — é o trecho que mostra que vocês sabem onde cada serviço
+da Oracle entra, em vez de tê-los listado no slide por listar:
+
+> "E dentro do ecossistema de vocês, a gente sabe onde quer chegar. **Data Safe** para
+> mascarar dado sensível fora de produção — que para dado de saúde é obrigação de LGPD, não
+> enfeite. **Document Understanding** para ler guia de faturamento, que hoje é digitação
+> manual e é de onde vem boa parte da glosa. E **AI Vector Search** na similaridade de
+> nomes, se ele se provar melhor que o Jaro-Winkler que estamos usando. A gente preferiu
+> fazer um serviço direito antes de encostar em doze."
+
+Três serviços, cada um amarrado a um problema que vocês acabaram de mostrar na tela — não
+uma lista. E a última frase converte o que pareceria dívida em critério de engenharia.
+
+> ⚠️ **Só diga isso se for verdade.** Prometer roadmap para o fabricante do produto, sem
+> intenção real de seguir, é pior que ficar calado — eles vão perguntar na próxima mentoria.
+
 > "A gente não é mais um sistema. A gente é a costura entre eles."
-
----
-
 
 ---
 
