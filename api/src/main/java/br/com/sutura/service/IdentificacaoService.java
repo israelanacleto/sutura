@@ -6,6 +6,7 @@ import br.com.sutura.web.Dtos.CandidatoDto;
 import br.com.sutura.web.Dtos.ComparacaoCampoDto;
 import br.com.sutura.web.Dtos.DecisaoRequest;
 import br.com.sutura.web.Dtos.RegistroResumoDto;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +108,7 @@ public class IdentificacaoService {
         String situacao;
         if (vazio(valorA) || vazio(valorB)) {
             situacao = AUSENTE;
-        } else if (valorA.equals(valorB)) {
+        } else if (equivalentes(valorA, valorB)) {
             situacao = IGUAL;
         } else {
             situacao = DIVERGENTE;
@@ -117,6 +118,25 @@ public class IdentificacaoService {
 
     private boolean vazio(Object valor) {
         return valor == null || (valor instanceof String texto && texto.isBlank());
+    }
+
+    /**
+     * Texto é comparado sem acento, igual ao que a view faz no banco. Sem isso a tela
+     * marcaria "CONCEIÇÃO ROCHA" e "CONCEICAO ROCHA" como divergentes enquanto o score
+     * as trata como o mesmo valor — o operador veria a tela contradizer o número.
+     * Os valores exibidos continuam sendo os originais, com acento, para que a diferença
+     * de grafia permaneça visível.
+     */
+    private boolean equivalentes(Object valorA, Object valorB) {
+        if (valorA instanceof String a && valorB instanceof String b) {
+            return semAcento(a).equalsIgnoreCase(semAcento(b));
+        }
+        return valorA.equals(valorB);
+    }
+
+    private String semAcento(String texto) {
+        return Normalizer.normalize(texto, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 
     /**

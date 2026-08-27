@@ -5,6 +5,7 @@ import br.com.sutura.repository.RegistroOrigemRepository;
 import br.com.sutura.repository.SistemaOrigemRepository;
 import br.com.sutura.web.Dtos.ConexaoDto;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ConexaoService {
 
     private static final DateTimeFormatter HORA = DateTimeFormatter.ofPattern("dd/MM 'às' HH:mm");
+    private static final ZoneId FUSO_DA_OPERACAO = ZoneId.of("America/Sao_Paulo");
 
     private final SistemaOrigemRepository sistemaRepository;
     private final RegistroOrigemRepository registroRepository;
@@ -46,7 +48,13 @@ public class ConexaoService {
                 sistema.getObservacao());
     }
 
+    /**
+     * O Autonomous Database roda em UTC, então SYSTIMESTAMP volta em UTC. Sem converter,
+     * a tela mostraria a sincronização três horas no futuro para quem está no Brasil.
+     */
     private String formatar(OffsetDateTime momento) {
-        return momento == null ? "nunca" : momento.format(HORA);
+        return momento == null
+                ? "nunca"
+                : momento.atZoneSameInstant(FUSO_DA_OPERACAO).format(HORA);
     }
 }

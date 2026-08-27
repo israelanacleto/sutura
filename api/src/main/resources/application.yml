@@ -19,7 +19,11 @@ spring:
     open-in-view: false
   flyway:
     enabled: true
+    # O schema ADMIN do Autonomous nunca está vazio, então o baseline é obrigatório.
+    # baseline-version: 0 é essencial: com o padrão (1), o Flyway marcaria a
+    # V1__schema.sql como já aplicada e pularia a criação das tabelas.
     baseline-on-migrate: true
+    baseline-version: 0
     locations: classpath:db/migration
 
 sutura:
