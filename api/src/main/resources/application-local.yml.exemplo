@@ -1,13 +1,47 @@
-# Copie para application-local.yml (que está no .gitignore) e preencha.
+# Copie este arquivo para application-local.yml (que está no .gitignore) e preencha.
 # Rode com: mvn spring-boot:run -Dspring-boot.run.profiles=local
 #
-# Autonomous Database com wallet (mTLS):
-#   1. Descompacte a wallet em, por exemplo, F:\PJ\FIAP\Sutura\.wallet
-#   2. O alias (suturadb_high) está no tnsnames.ora dentro da wallet
-#   3. TNS_ADMIN aponta para a pasta da wallet
+# ---------------------------------------------------------------------------
+# Caminho A — TLS simples, SEM wallet  (recomendado)
+# ---------------------------------------------------------------------------
+# Funciona porque o Autonomous Database foi criado com "Require mutual TLS (mTLS)
+# authentication" DESLIGADO. Pegue a string em:
+#   Console OCI > Autonomous AI Database > Sutura > Database connection
+#   > Connection strings > TLS  (não "Mutual TLS")
+#
+# Use o serviço _high para a aplicação. A string tem este formato:
+#
+#   jdbc:oracle:thin:@(description=(retry_count=20)(retry_delay=3)
+#     (address=(protocol=tcps)(port=1521)(host=adb.sa-saopaulo-1.oraclecloud.com))
+#     (connect_data=(service_name=<identificador>_suturadb_high.adb.oraclecloud.com))
+#     (security=(ssl_server_dn_match=yes)))
+#
+# Cole tudo em UMA linha só, sem quebras.
 
 spring:
   datasource:
-    url: jdbc:oracle:thin:@suturadb_high?TNS_ADMIN=F:/PJ/FIAP/Sutura/.wallet
-    username: SUTURA
-    password: TROQUE_AQUI
+    url: jdbc:oracle:thin:@COLE_AQUI_A_STRING_TLS
+    username: ADMIN
+    password: SENHA_DO_ADMIN
+
+# ---------------------------------------------------------------------------
+# Caminho B — mTLS com wallet  (plano B)
+# ---------------------------------------------------------------------------
+# Só é necessário se o mTLS for exigido. Baixe a wallet em Database connection >
+# Download wallet, descompacte em F:\PJ\FIAP\Sutura\.wallet (já está no .gitignore)
+# e use:
+#
+# spring:
+#   datasource:
+#     url: jdbc:oracle:thin:@suturadb_high?TNS_ADMIN=F:/PJ/FIAP/Sutura/.wallet
+#     username: ADMIN
+#     password: SENHA_DO_ADMIN
+#
+# Neste caminho a dependência oraclepki do pom.xml passa a ser obrigatória.
+
+# ---------------------------------------------------------------------------
+# Aviso
+# ---------------------------------------------------------------------------
+# A senha do ADMIN não vai para o git em hipótese nenhuma. application-local.yml
+# está no .gitignore. Se precisar compartilhar com o grupo, mande a senha por um
+# canal separado — nunca no repositório, nunca no chat do trabalho.
