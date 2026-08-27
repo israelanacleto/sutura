@@ -1,37 +1,46 @@
-# Apresentação — mentoria 2
+# Apresentação
 
-Material da apresentação do protótipo da Sutura. Mentoria 2 do challenge, 27/08/2026.
+Material da demonstração da Sutura, para a versão **ligada ao Oracle Autonomous Database**.
 
 ## Conteúdo
 
-| Arquivo | O que é |
+| Arquivo | O que mostra |
 |---|---|
-| [roteiro-demo.md](roteiro-demo.md) | Roteiro cronometrado de 5 minutos: falas, cliques exatos, plano B e as perguntas prováveis da banca com resposta |
-| `01-conexoes.png` | Hub de conexões — MV, Tasy, laboratório e a planilha legada |
-| `02-identificacao.png` | Fila de identificação — comparação campo a campo, incluindo o homônimo que o sistema recomenda **não** costurar |
-| `03-historico-unificado.png` | Histórico unificado — linha do tempo com a origem de cada evento e o padrão das infusões a cada 28 dias |
-| `04-antes-da-sutura.png` | A mesma paciente **antes** da costura: 3 cadastros, 3 grafias do nome, cada sistema vendo um pedaço |
+| [roteiro-demo.md](roteiro-demo.md) | Roteiro cronometrado de 5 minutos: preparação, falas, cliques na ordem, plano B e as perguntas prováveis com resposta |
+| `01-conexoes.png` | Hub de conexões — MV, Tasy, laboratório e a planilha legada, com os volumes reais do banco |
+| `02-fila-identificacao.png` | A fila no estado inicial, com os oito pares e as três recomendações diferentes |
+| `03-caso-acentuacao.png` | **A imagem mais forte.** O par do Sebastião aberto: `CONCEIÇÃO ROCHA` e `CONCEICAO ROCHA` reconhecidos como o mesmo valor, com os dois originais à vista |
+| `04-historico-unificado.png` | A linha do tempo costurada, com a origem de cada evento e o padrão das infusões |
+| `05-antes-da-sutura.png` | A mesma paciente antes da costura: três cadastros, três grafias, cada sistema vendo um pedaço |
 
-As capturas saíram da aplicação rodando, em 2880 px de largura (2×) — dá pra colar no
-PowerPoint sem serrilhar.
+Capturas em 2880 px de largura (2×), tiradas da aplicação rodando contra o banco.
+
+## Antes de apresentar
+
+Restaure o estado da demonstração, senão o botão "Sincronizar" não traz nada novo e a
+linha do tempo já nasce completa:
+
+```
+api/scripts/reset-demo.sql
+```
+
+O script imprime a conferência ao final — o esperado é **15 registros, 1 vínculo,
+0 decisões, 12 eventos**. Os passos e a preparação completa estão no
+[roteiro](roteiro-demo.md).
 
 ## Como regerar as capturas
 
-Com a aplicação no ar (`npm start` dentro de `web/`):
+Com backend e front no ar, e o banco no estado inicial:
 
 ```bash
-chrome --headless=new --hide-scrollbars --force-device-scale-factor=2 --window-size=1440,1010 --screenshot=01-conexoes.png http://localhost:4200/conexoes
+chrome --headless=new --hide-scrollbars --force-device-scale-factor=2 --window-size=1440,900 --screenshot=01-conexoes.png http://localhost:4200/conexoes
 ```
 
-A tela de histórico aceita `?modo=antes` na URL para abrir direto na visão fragmentada —
-serve tanto para a captura quanto para a demonstração ao vivo, se você quiser começar por
-ela sem precisar clicar no alternador.
+Duas telas aceitam parâmetro na URL, o que permite capturar estados que exigiriam clique:
 
-## Ordem da apresentação
+- `/identificacao?abrir=<id do par>` abre um candidato específico já expandido
+- `/paciente?modo=antes` abre direto na visão fragmentada
 
-1. Conexões → clicar em **Sincronizar agora** no MV
-2. Identificação → costurar os dois pares da Maria, depois abrir o caso do homônimo
-3. Histórico unificado → apontar o padrão das infusões
-4. Alternar para **Antes da Sutura** — é o ponto mais forte da demonstração
-
-O detalhamento de cada passo, com as falas, está no [roteiro](roteiro-demo.md).
+As capturas 03, 04 e 05 exigem que a ingestão e a costura da Maria já tenham sido feitas —
+ou seja, são tiradas **durante** a demonstração, não no estado inicial. Depois de gerá-las,
+rode o reset de novo.

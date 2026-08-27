@@ -1,126 +1,182 @@
 # Roteiro da demonstração — 5 minutos
 
-Mentoria 2 · 20/08/2026 · 19:30
+Versão de 27/08/2026, para a aplicação **ligada ao Oracle Autonomous Database**.
 
-Protótipo em `web/`. Subir com `npm start` dentro de `web/` e abrir `http://localhost:4200`.
-Deixar o navegador já aberto na tela **Conexões** antes de começar a apresentar.
-
-> Antes de começar: clicar em **Reiniciar demonstração** (canto inferior esquerdo) para
-> zerar o estado. Isso devolve a fila de identificação ao ponto inicial.
+> A versão anterior deste roteiro descrevia o protótipo com dados fixos. Ela não vale mais:
+> botões mudaram, scores mudaram e o "Sincronizar" deixou de ser simulação.
 
 ---
 
-## 0:00 – 0:45 · O problema (sem tela, ou no slide do Rich Picture)
+## Antes de começar
 
-> "Hoje um paciente não tem um histórico. Ele tem pedaços de histórico espalhados por
-> sistemas que não se falam. O hospital usa MV, a clínica de oncologia usa Tasy, o
-> laboratório tem o próprio sistema. Cada um enxerga um pedaço, ninguém enxerga a pessoa.
-> O resultado é exame repetido, história recontada, e uma equipe administrativa perdendo
-> mais de 50 horas por mês costurando isso na mão, no Excel."
+**1. Restaurar o estado da demonstração** (obrigatório se alguém já mexeu na aplicação):
 
-## 0:45 – 1:45 · Tela 1 — Conexões
+```
+api/scripts/reset-demo.sql
+```
 
-**Ação:** já está aberta. Apontar os quatro cartões.
+Rode pelo SQL Worksheet do console OCI (*Database actions → SQL*) ou por linha de comando.
+Ao final ele imprime a conferência — o esperado é **15 registros, 1 vínculo, 0 decisões,
+12 eventos**. Sem isso, o botão "Sincronizar" não traz nada novo e a linha do tempo já
+nasce completa, matando os dois melhores momentos da apresentação.
 
-> "A Sutura não substitui nenhum desses sistemas. Ela se conecta por cima. Aqui estão o MV
-> do Hospital Santa Clara, o Tasy da clínica de oncologia, o laboratório via HL7 — e um
-> quarto caso que todo mundo que trabalha com saúde reconhece: a planilha de faturamento
-> importada na mão, com linhas rejeitadas por layout fora do padrão."
+**2. Subir as duas pontas:**
 
-**Ação:** clicar em **Sincronizar agora** no cartão do MV. Esperar o spinner.
+```bash
+cd F:\PJ\FIAP\Sutura\api && mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
 
-> "A sincronização traz os registros novos — e olha o que aparece."
+```bash
+cd F:\PJ\FIAP\Sutura\web && npm start
+```
 
-*(surge a faixa amarela: 2 novos pares suspeitos de serem o mesmo paciente)*
+**3. Deixar o navegador aberto em `http://localhost:4200/conexoes`** antes de apresentar.
 
-> "Dois novos pares de registros que provavelmente são a mesma pessoa em sistemas
-> diferentes. É aí que a Sutura faz o trabalho que dá nome a ela."
+---
+
+## 0:00 – 0:40 · O problema
+
+> "Um paciente não tem um histórico. Ele tem pedaços de histórico espalhados por sistemas
+> que não se falam. O hospital usa MV, a clínica de oncologia usa Tasy, o laboratório tem o
+> próprio sistema. Cada um enxerga um pedaço, ninguém enxerga a pessoa. O resultado é exame
+> repetido, história recontada, e uma equipe administrativa gastando mais de 50 horas por
+> mês costurando isso na mão."
+
+## 0:40 – 1:20 · Conexões — e uma ingestão de verdade
+
+**Tela:** já aberta em Conexões.
+
+> "A Sutura não substitui nenhum desses sistemas, se conecta por cima. MV, Tasy,
+> laboratório — e um quarto caso que quem trabalha com saúde reconhece na hora: a planilha
+> de faturamento importada na mão, com linhas rejeitadas por layout fora do padrão."
+
+**Ação:** clicar em **Sincronizar agora** no cartão do **Philips Tasy**.
+
+> "E isso aqui não é um botão de mentira. Ele manda um Bundle FHIR R4 para a API, que
+> parseia o documento, grava cada registro **preservando o documento original** para
+> auditoria, e manda o banco reavaliar quem pode ser a mesma pessoa."
+
+*(aparece: "2 registros novos e 3 eventos ingeridos")*
 
 **Ação:** clicar em **Ver fila de identificação →**.
 
-## 1:45 – 3:15 · Tela 2 — Identificação (o coração)
+## 1:20 – 3:00 · Identificação — o coração
 
-**Ação:** o primeiro cartão (score 96%) já vem aberto.
+> "Aqui está o motor. E ele não roda em Java: o score é calculado **dentro do Oracle**, com
+> `UTL_MATCH.JARO_WINKLER_SIMILARITY`, que é uma função nativa do banco. A gente usa o
+> Oracle como banco de verdade, não como um lugar onde guardar JSON."
 
-> "O motor compara CNS, CPF, data de nascimento, nome da mãe e similaridade do nome. Aqui:
-> o CNS é idêntico, a data de nascimento é idêntica, o nome da mãe confere. O que difere é
-> a grafia do nome — num sistema está 'Maria Aparecida Souza', no outro 'M. A. Souza' — e o
-> CPF que simplesmente não foi preenchido no Tasy. Para um sistema tradicional, são duas
-> pessoas. Para a Sutura, é a mesma pessoa com 96% de confiança."
+### Beat 1 — o caso que veio da ingestão (~40s)
 
-**Ação:** clicar em **Costurar registros**.
+**Ação:** abrir **SEBASTIÃO ROCHA MARTINS × SEBASTIAO MARTINS**, score 99.
 
-**Ação:** abrir o segundo cartão (91%, Maria Aparecida **de** Souza, laboratório) e costurar
-também.
+> "Este par acabou de chegar naquela sincronização. CNS confere, CPF confere, data de
+> nascimento confere. E olhem o nome da mãe: um sistema gravou CONCEIÇÃO com cedilha e til,
+> o outro gravou CONCEICAO sem acento nenhum."
 
-> "Mesma paciente, agora com a terceira fonte."
+**Apontar a linha "Nome da mãe", marcada como igual.**
 
-**Ação:** abrir o cartão do **João Carlos Ferreira** (score 58%, vermelho).
+> "Sistema de saúde brasileiro gravando sem acento é regra, não exceção — legado em ASCII,
+> integração que perde diacrítico, importação de planilha. Descobrimos isso testando com
+> dado realista: antes da correção, esse par caía de 99 para 89 e ia parar na fila de
+> revisão humana por causa de uma cedilha."
 
-> "E esse é o ponto que separa a Sutura de um 'de-para' ingênuo. Dois registros com o nome
-> exatamente igual. Um sistema burro juntaria os dois — e criaria um prontuário falso,
-> misturando o histórico de duas pessoas. Isso é risco clínico, não é bug de cadastro. A
-> Sutura olha CNS, CPF e data de nascimento, vê que tudo diverge, e **recomenda manter
-> separado**. A decisão final é sempre humana, e fica registrada para auditoria e LGPD."
+**Ação:** **Costurar registros**.
 
-**Ação:** clicar em **São pessoas diferentes**.
+### Beat 2 — o homônimo (~45s)
 
-**Ação:** no cartão costurado da Maria, clicar em **Ver histórico unificado →**.
+**Ação:** abrir **JOÃO CARLOS FERREIRA × JOÃO CARLOS FERREIRA**, score 10.
 
-## 3:15 – 4:30 · Tela 3 — Histórico unificado
+> "Agora o oposto. Nome escrito **exatamente igual** nos dois sistemas. Um de-para ingênuo
+> juntaria os dois na hora — e criaria um prontuário falso, misturando o histórico de duas
+> pessoas. Isso não é erro de cadastro, é risco clínico. Alguém pode receber medicação com
+> base no histórico de outro."
 
-> "Esse é o resultado da costura. Maria Aparecida, 62 anos, em tratamento de câncer de mama."
+> "A Sutura olha CNS, CPF, data de nascimento e nome da mãe, vê que **tudo** diverge, e
+> devolve score 10 com recomendação de manter separado. E não tem nenhum `if` no código
+> tratando esse caso: é a fórmula que chega nessa conclusão sozinha."
 
-**Ação:** apontar a faixa verde "Padrão detectado".
+**Ação:** **São pessoas diferentes**.
 
-> "Seis infusões com intervalo exato de 28 dias. Isso não são seis atendimentos avulsos — é
-> um tratamento contínuo, ciclo 6 de 8, com a próxima infusão prevista para 11 de setembro.
-> Repare na coluna da esquerda: as infusões vêm do Tasy, a cirurgia e as consultas vêm do
-> MV, a biópsia e o hemograma vêm do laboratório. Um histórico só, com a origem de cada
-> evento rastreada."
+> "E a decisão fica gravada com usuário, data e hora — inclusive a de separar. Auditoria
+> clínica e LGPD exigem poder responder quem decidiu o quê, e quando."
 
-**Ação:** clicar em **Antes da Sutura** (canto superior direito). *(o momento da virada)*
+### Beat 3 — costurar a Maria (~20s)
 
-> "E é assim que essa mesma paciente existe hoje. Três cadastros, com três grafias
-> diferentes do nome, e cada sistema enxergando cinco, quatro, três eventos de um histórico
-> de doze. O oncologista não vê o ecocardiograma que o hospital pediu. O hospital não sabe
-> em que ciclo ela está. E ninguém está errado — cada um está fazendo o certo com o pedaço
-> que tem."
+**Ação:** costurar os **dois** pares da Maria Aparecida (MV × Tasy e MV × Lab).
+
+**Ação:** clicar em **Ver histórico unificado →**.
+
+## 3:00 – 4:20 · Histórico unificado
+
+> "Maria Aparecida, 62 anos, em tratamento de câncer de mama. Isso aqui não existia trinta
+> segundos atrás — nasceu das costuras que a gente acabou de fazer."
+
+**Apontar a faixa verde.**
+
+> "Seis infusões com intervalo de 28 dias. Não são seis atendimentos avulsos: é um
+> tratamento contínuo, e o sistema projeta a próxima para 11 de setembro. Essa conta sai
+> dos dados, não é texto escrito na tela."
+
+> "Repare na origem de cada evento: as infusões vêm do Tasy, a cirurgia e as consultas vêm
+> do MV, a biópsia e o hemograma vêm do laboratório. Um histórico só, com a procedência de
+> cada linha rastreada até o sistema de origem."
+
+**Ação:** clicar em **Antes da Sutura**. *(o momento da virada)*
+
+> "E é assim que essa paciente existe hoje. Três cadastros, três grafias diferentes do
+> nome, e cada sistema enxergando quatro, seis, dois eventos de um histórico de doze. O
+> oncologista não vê o ecocardiograma que o hospital pediu. O hospital não sabe em que
+> ciclo ela está. E ninguém está errado — cada um está fazendo o certo com o pedaço que tem."
 
 **Ação:** voltar para **Com a Sutura**.
 
-## 4:30 – 5:00 · Fechamento
+## 4:20 – 5:00 · Fechamento
 
-> "Isso é um protótipo com dados fictícios — o backend em Java com Spring Boot e o Oracle
-> Autonomous Database entram no lugar da camada de dados que hoje está em memória. Mas o
-> fluxo é esse: conectar, identificar, costurar. E com o dado limpo e unificado, a próxima
-> camada é a automação de back-office e a prevenção de glosa — e ainda alimentar
-> ferramentas clínicas de IA, como a Sofya, que hoje recebem dado sujo e fragmentado.
-> A gente não é mais um sistema. A gente é a costura entre eles."
+> "Tudo o que vocês viram rodou contra um Oracle Autonomous Database em São Paulo, com
+> Spring Boot e Angular. Os dados são fictícios; o caminho é real — ingestão FHIR, motor de
+> identificação no banco, trilha de auditoria."
+
+> "O próximo passo é a camada que fica em cima disso: automação de back-office e prevenção
+> de glosa. E, com dado limpo e unificado, alimentar ferramentas clínicas de IA como a
+> Sofya, que hoje recebem dado sujo e fragmentado."
+
+> "A gente não é mais um sistema. A gente é a costura entre eles."
 
 ---
 
 ## Se algo der errado
 
-- **A aplicação não sobe:** usar as capturas de tela no deck (slides adicionados ao final).
-- **O estado ficou bagunçado no meio da demo:** botão **Reiniciar demonstração** na barra
-  lateral devolve tudo ao início sem recarregar a página.
-- **Perguntarem se está funcionando de verdade:** responder direto — é um protótipo
-  navegável com dados fictícios, o motor de identificação e a persistência são a próxima
-  entrega (08/09). Não vender como pronto; a honestidade aqui conta ponto.
+- **A tela mostra "Não foi possível falar com a API":** o backend caiu ou o banco parou.
+  Autonomous Free para sozinho após 7 dias sem uso — nesse caso, religar pelo console leva
+  ~1 minuto e o dado é preservado.
+- **"Sincronizar" responde "Nada novo":** o lote já foi ingerido. Rode o `reset-demo.sql`.
+- **A fila está vazia:** mesma coisa, rode o reset.
+- **Nada sobe a tempo:** as capturas em `docs/apresentacao` são o plano B.
 
-## Perguntas que provavelmente vão fazer
+## Perguntas prováveis
+
+**"Só 17 registros?"**
+É o lote de demonstração, não um teste de carga. O motor é o mesmo para dezessete ou para
+cento e vinte mil — a comparação roda no banco, com blocking por CNS, CPF, data de
+nascimento e SOUNDEX do nome para não virar produto cartesiano.
+
+**"E quando não há CNS nem CPF?"**
+Tem um caso desses na fila: dois "Roberto Nascimento" com a mesma data de nascimento e
+nenhum documento dos dois lados. O score dá 100 — tudo que dava para comparar bateu — mas o
+sistema manda para **revisão humana** mesmo assim, porque só havia 25 dos 100 pontos de
+evidência possíveis. Score alto com pouca evidência não é confiança, é ilusão.
 
 **"Os ERPs vão deixar vocês integrarem?"**
-É o principal risco do negócio, e está mapeado no stakeholder *TI/fornecedor do ERP*. MV e
-Tasy têm APIs REST e suporte a FHIR/HL7; o caminho é integração autorizada pelo cliente,
-que é o dono do dado — não raspagem.
+É o principal risco do negócio e está mapeado no stakeholder *TI/fornecedor do ERP*. MV e
+Tasy têm API REST e suporte a FHIR/HL7. O caminho é integração autorizada pelo cliente, que
+é o dono do dado — não raspagem.
 
 **"E a LGPD?"**
-Dado de saúde é dado sensível. O desenho prevê OCI Data Safe, mascaramento em ambientes
-não-produtivos, e trilha de auditoria em toda decisão de costura — que é exatamente o que
-a tela de identificação registra.
+Dado de saúde é dado sensível. Toda decisão de identidade é gravada com autor e momento, e
+o documento original de cada registro fica preservado para auditoria. No desenho, OCI Data
+Safe entra para mascaramento em ambiente não-produtivo.
 
 **"Isso não é o que um barramento de interoperabilidade já faz?"**
-Barramento transporta mensagem. Ele não resolve identidade do paciente nem back-office. A
-Sutura resolve o "quem é essa pessoa nos meus cinco sistemas" e o que vem depois disso.
+Barramento transporta mensagem. Ele não resolve identidade de paciente nem back-office. A
+Sutura resolve o "quem é essa pessoa nos meus cinco sistemas" — e o que vem depois disso.
