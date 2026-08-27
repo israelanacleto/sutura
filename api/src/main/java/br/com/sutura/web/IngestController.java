@@ -1,5 +1,6 @@
 package br.com.sutura.web;
 
+import br.com.sutura.ingest.BundleDeExemplo;
 import br.com.sutura.ingest.IngestService;
 import br.com.sutura.web.Dtos.IngestResumoDto;
 import java.io.IOException;
@@ -18,9 +19,20 @@ import org.springframework.web.multipart.MultipartFile;
 public class IngestController {
 
     private final IngestService servico;
+    private final BundleDeExemplo bundleDeExemplo;
 
-    public IngestController(IngestService servico) {
+    public IngestController(IngestService servico, BundleDeExemplo bundleDeExemplo) {
         this.servico = servico;
+        this.bundleDeExemplo = bundleDeExemplo;
+    }
+
+    /**
+     * Ingere o Bundle de demonstração que acompanha a aplicação. É o que o botão
+     * "Sincronizar agora" da tela de conexões dispara — ingestão real, dado fictício.
+     */
+    @PostMapping("/exemplo")
+    public IngestResumoDto ingerirExemplo(@RequestParam(defaultValue = "TASY") String sistema) {
+        return servico.ingerir(sistema, bundleDeExemplo.conteudo());
     }
 
     /**

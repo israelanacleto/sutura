@@ -47,7 +47,6 @@ export interface Candidato {
   ladoA: RegistroOrigem;
   ladoB: RegistroOrigem;
   campos: ComparacaoCampo[];
-  novo?: boolean;
 }
 
 export type CategoriaEvento = 'infusao' | 'consulta' | 'exame' | 'cirurgia';
@@ -70,6 +69,8 @@ export interface CadastroFragmentado {
   cns: string;
   cpf: string;
   unidade: string;
+  /** Os eventos que este sistema — e apenas ele — enxerga. */
+  eventos: EventoClinico[];
 }
 
 export interface Paciente {

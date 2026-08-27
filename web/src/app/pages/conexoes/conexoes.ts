@@ -1,7 +1,7 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SISTEMAS } from '../../core/mock-data';
+import { SISTEMAS } from '../../core/sistemas';
 import { SourceSystem, StatusConexao } from '../../core/models';
 import { SuturaStore } from '../../core/sutura-store';
 
@@ -15,10 +15,6 @@ export class Conexoes {
   protected readonly store = inject(SuturaStore);
   protected readonly sistemas = SISTEMAS;
 
-  protected readonly novosDetectados = computed(() =>
-    this.store.fila().some((c) => c.novo),
-  );
-
   protected rotuloStatus(status: StatusConexao): string {
     return status === 'conectado' ? 'Conectado' : status === 'atencao' ? 'Atenção' : 'Offline';
   }
@@ -29,5 +25,10 @@ export class Conexoes {
 
   protected sincronizando(c: SourceSystem): boolean {
     return this.store.sincronizando() === c.id;
+  }
+
+  /** A ingestão de demonstração está preparada para o Tasy. */
+  protected permiteSincronizar(c: SourceSystem): boolean {
+    return c.id === 'tasy';
   }
 }

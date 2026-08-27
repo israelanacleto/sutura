@@ -7,6 +7,14 @@
     </p>
   </header>
 
+  @if (store.erroConexoes()) {
+    <div class="falha">
+      <strong>Não foi possível falar com a API.</strong>
+      Verifique se o backend está no ar em <code>localhost:8080</code> e se o banco está
+      acessível.
+    </div>
+  }
+
   <section class="kpis">
     <div class="card kpi">
       <div class="eyebrow">Sistemas conectados</div>
@@ -14,9 +22,9 @@
       <div class="kpi-nota">MV, Tasy, laboratório e planilha legada</div>
     </div>
     <div class="card kpi">
-      <div class="eyebrow">Registros sincronizados</div>
+      <div class="eyebrow">Registros ingeridos</div>
       <div class="kpi-valor">{{ store.totalRegistros() | number: '1.0-0' }}</div>
-      <div class="kpi-nota">Prontuários, atendimentos, exames e guias</div>
+      <div class="kpi-nota">Cada um com o documento original preservado</div>
     </div>
     <div class="card kpi">
       <div class="eyebrow">Pendentes de identificação</div>
@@ -25,15 +33,20 @@
     </div>
   </section>
 
-  @if (novosDetectados()) {
+  @if (store.ultimoResultadoDeSync(); as resultado) {
     <div class="aviso-sync surgir">
       <span class="dot"></span>
-      <span>
-        A sincronização trouxe <strong>2 novos pares</strong> de registros suspeitos de serem
-        o mesmo paciente.
-      </span>
+      <span>{{ resultado }}</span>
       <a routerLink="/identificacao">Ver fila de identificação →</a>
     </div>
+  }
+
+  @if (store.erroDeAcao(); as erro) {
+    <div class="falha surgir">{{ erro }}</div>
+  }
+
+  @if (store.carregandoConexoes() && store.conexoes().length === 0) {
+    <div class="card carregando"><span class="spinner"></span> Consultando o banco…</div>
   }
 
   <section class="grade">
@@ -74,19 +87,24 @@
         <p class="observacao">{{ c.observacao }}</p>
 
         <footer>
-          <button
-            type="button"
-            class="btn btn-sm btn-primary"
-            [disabled]="!!store.sincronizando()"
-            (click)="store.sincronizar(c.id)"
-          >
-            @if (sincronizando(c)) {
-              <span class="spinner"></span> Sincronizando…
-            } @else {
-              Sincronizar agora
-            }
-          </button>
-          <span class="muted mono">endpoint /v1/ingest/{{ c.id }}</span>
+          @if (permiteSincronizar(c)) {
+            <button
+              type="button"
+              class="btn btn-sm btn-primary"
+              [disabled]="!!store.sincronizando()"
+              (click)="store.sincronizar(c.id)"
+            >
+              @if (sincronizando(c)) {
+                <span class="spinner"></span> Ingerindo…
+              } @else {
+                Sincronizar agora
+              }
+            </button>
+            <span class="muted mono">POST /v1/ingest/exemplo</span>
+          } @else {
+            <span class="muted">Sincronização automática</span>
+            <span class="muted mono">GET /v1/conexoes</span>
+          }
         </footer>
       </article>
     }

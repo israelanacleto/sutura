@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SISTEMAS } from '../../core/mock-data';
+import { SISTEMAS } from '../../core/sistemas';
 import { Candidato, Recomendacao, SituacaoCampo } from '../../core/models';
 import { Decisao, SuturaStore } from '../../core/sutura-store';
 
@@ -13,18 +13,15 @@ import { Decisao, SuturaStore } from '../../core/sutura-store';
 export class Identificacao {
   protected readonly store = inject(SuturaStore);
   protected readonly sistemas = SISTEMAS;
-  protected readonly expandido = signal<string | null>('c1');
-
-  /** Pares que envolvem a paciente usada na tela de histórico. */
-  private readonly paresDaMaria = ['c1', 'c2'];
+  protected readonly expandido = signal<string | null>(null);
 
   protected alternar(id: string): void {
     this.expandido.update((atual) => (atual === id ? null : id));
   }
 
-  protected decidir(c: Candidato, acao: Decisao): void {
-    this.store.decidir(c.id, acao);
+  protected async decidir(c: Candidato, acao: Decisao): Promise<void> {
     if (this.expandido() === c.id) this.expandido.set(null);
+    await this.store.decidir(c, acao);
   }
 
   protected classeScore(score: number): string {
@@ -45,9 +42,5 @@ export class Identificacao {
 
   protected simbolo(s: SituacaoCampo): string {
     return s === 'igual' ? '=' : s === 'divergente' ? '≠' : '—';
-  }
-
-  protected levaAoHistorico(id: string): boolean {
-    return this.paresDaMaria.includes(id);
   }
 }
