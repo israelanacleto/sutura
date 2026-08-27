@@ -5,6 +5,10 @@ Versão de 27/08/2026, para a aplicação **ligada ao Oracle Autonomous Database
 > A versão anterior deste roteiro descrevia o protótipo com dados fixos. Ela não vale mais:
 > botões mudaram, scores mudaram e o "Sincronizar" deixou de ser simulação.
 
+Os termos técnicos que aparecem aqui — Bundle FHIR R4, Jaro-Winkler, piso de evidência,
+registro × evento — estão explicados no [glossário](glossario.md), com a frase pronta para
+responder cada um.
+
 ---
 
 ## Antes de começar
