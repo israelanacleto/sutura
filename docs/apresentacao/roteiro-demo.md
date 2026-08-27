@@ -41,6 +41,27 @@ cd F:\PJ\FIAP\Sutura\web && npm start
 
 ---
 
+
+## Compartilhamento de tela — quem pilota é você
+
+Cinco minutos de preparo que evitam o constrangimento clássico:
+
+- **Compartilhe a janela do navegador, não a tela inteira.** Notificação do WhatsApp
+  aparecendo no meio da demonstração de um produto de saúde é péssimo.
+- **Silencie as notificações** antes de começar (Windows: `Win + N` → Assistente de foco).
+- **Feche as outras abas** e esconda a barra de favoritos (`Ctrl + Shift + B`).
+- **Aumente o zoom para 110% ou 125%** (`Ctrl + +`). Compressão de vídeo em chamada come
+  detalhe, e a tabela de comparação campo a campo é o momento em que eles precisam
+  conseguir ler.
+- **Deixe a aplicação já aberta em `localhost:4200/conexoes`** antes de compartilhar.
+- **Rode o `reset-demo.sql` antes de tudo isso**, não depois.
+
+Se outra pessoa estiver narrando enquanto você clica, combinem que **quem fala olha para a
+banca e quem clica olha para a tela**. O erro comum é o piloto narrar sozinho, de cabeça
+baixa, para o próprio monitor.
+
+---
+
 ## 0:00 – 0:40 · O problema
 
 > "Um paciente não tem um histórico. Ele tem pedaços de histórico espalhados por sistemas
@@ -57,15 +78,27 @@ cd F:\PJ\FIAP\Sutura\web && npm start
 > laboratório — e um quarto caso que quem trabalha com saúde reconhece na hora: a planilha
 > de faturamento importada na mão, com linhas rejeitadas por layout fora do padrão."
 
-**Ação:** clicar em **Sincronizar agora** no cartão do **Philips Tasy**.
+**Onde clicar:** a tela tem três cartões de indicador no topo e, abaixo, **quatro cartões de
+sistema em duas colunas** — MV em cima à esquerda, **Philips Tasy em cima à direita**, Lab
+Alpha embaixo à esquerda, SGH Legado embaixo à direita.
+
+O botão **Sincronizar agora** fica no **rodapé do cartão do Tasy**, verde, no canto inferior
+esquerdo daquele cartão. **É o único cartão que tem botão** — os outros três mostram
+"Sincronização automática" no lugar. Se você estiver vendo texto em vez de botão, está no
+cartão errado.
 
 > "E isso aqui não é um botão de mentira. Ele manda um Bundle FHIR R4 para a API, que
 > parseia o documento, grava cada registro **preservando o documento original** para
 > auditoria, e manda o banco reavaliar quem pode ser a mesma pessoa."
 
-*(aparece: "2 registros novos e 3 eventos ingeridos")*
+*(o botão vira "Ingerindo…" com um spinner por cerca de um segundo)*
 
-**Ação:** clicar em **Ver fila de identificação →**.
+**O que aparece:** uma **faixa amarela** entre os indicadores do topo e a grade de cartões,
+dizendo *"2 registros novos e 3 eventos ingeridos"*. O contador **Pendentes de
+identificação** salta de 8 para 10.
+
+**Onde clicar:** o link **Ver fila de identificação →** fica na **ponta direita dessa faixa
+amarela**.
 
 ## 1:20 – 3:00 · Identificação — o coração
 
@@ -75,7 +108,13 @@ cd F:\PJ\FIAP\Sutura\web && npm start
 
 ### Beat 1 — o caso que veio da ingestão (~40s)
 
-**Ação:** abrir **SEBASTIÃO ROCHA MARTINS × SEBASTIAO MARTINS**, score 99.
+**Onde clicar:** a lista vem ordenada por score, do maior para o menor. O card do
+**SEBASTIÃO ROCHA MARTINS × SEBASTIAO MARTINS** é o **quarto**, logo abaixo do Carlos
+Eduardo Prado — mas procure pelo nome, não pela posição, porque a ordem muda conforme você
+decide os casos.
+
+Clique **em qualquer lugar da linha do cabeçalho do card** — a faixa com o score à esquerda
+e os dois nomes. O card abre para baixo e a setinha da direita gira.
 
 > "Este par acabou de chegar naquela sincronização. CNS confere, CPF confere, data de
 > nascimento confere. E olhem o nome da mãe: um sistema gravou CONCEIÇÃO com cedilha e til,
@@ -88,11 +127,17 @@ cd F:\PJ\FIAP\Sutura\web && npm start
 > dado realista: antes da correção, esse par caía de 99 para 89 e ia parar na fila de
 > revisão humana por causa de uma cedilha."
 
-**Ação:** **Costurar registros**.
+**Onde clicar:** **Costurar registros**, o botão verde no **canto inferior esquerdo da área
+que abriu**, logo abaixo da tabela de comparação.
+
+*(o card some da lista e aparece uma faixa "Costurado" no topo; o contador da fila cai de
+10 para 9)*
 
 ### Beat 2 — o homônimo (~45s)
 
-**Ação:** abrir **JOÃO CARLOS FERREIRA × JOÃO CARLOS FERREIRA**, score 10.
+**Onde clicar:** o card do **JOÃO CARLOS FERREIRA**, que é o **último da lista** — score 10,
+o único com a etiqueta vermelha *"Recomendado manter separado"*. Mesma coisa: clique na
+linha do cabeçalho.
 
 > "Agora o oposto. Nome escrito **exatamente igual** nos dois sistemas. Um de-para ingênuo
 > juntaria os dois na hora — e criaria um prontuário falso, misturando o histórico de duas
@@ -103,7 +148,12 @@ cd F:\PJ\FIAP\Sutura\web && npm start
 > devolve score 10 com recomendação de manter separado. E não tem nenhum `if` no código
 > tratando esse caso: é a fórmula que chega nessa conclusão sozinha."
 
-**Ação:** **São pessoas diferentes**.
+**Onde clicar:** **São pessoas diferentes**.
+
+Atenção: **neste card os botões estão invertidos.** Como a recomendação é separar, "São
+pessoas diferentes" é o botão **verde, à esquerda**, e "Costurar mesmo assim" é o branco ao
+lado. Nos outros cards é o contrário. A tela sempre coloca em verde o que o motor recomenda
+— e é justamente isso que você quer mostrar.
 
 > "E a decisão fica gravada com usuário, data e hora — inclusive a de separar. Auditoria
 > clínica e LGPD exigem poder responder quem decidiu o quê, e quando."
@@ -112,7 +162,13 @@ cd F:\PJ\FIAP\Sutura\web && npm start
 
 A Maria Aparecida aparece em **três** pares: MV × Tasy, MV × Lab e Tasy × Lab.
 
-**Ação:** costurar os dois primeiros — **MV × Tasy** e **MV × Lab**.
+**Onde clicar:** procure os cards em que o **lado esquerdo é MARIA APARECIDA SOUZA (MV)** —
+são dois. Um tem 100 de score e é o **primeiro da lista**; o outro tem 94 e está mais abaixo.
+
+Para cada um: clique no cabeçalho para abrir, depois em **Costurar registros**.
+
+O terceiro par da Maria — **M. A. SOUZA × MARIA APARECIDA DE SOUZA**, sem o MV do lado
+esquerdo — é o que vai sumir sozinho. Não clique nele.
 
 Ao costurar o segundo, o terceiro par **desaparece sozinho da fila**. Vale apontar:
 
@@ -121,7 +177,8 @@ Ao costurar o segundo, o terceiro par **desaparece sozinho da fila**. Vale apont
 > tira o par da fila sozinho. É a diferença entre uma lista de sugestões e um sistema
 > que sabe o que já resolveu."
 
-**Ação:** clicar em **Ver histórico unificado →**.
+**Onde clicar:** o link **Ver histórico unificado →** aparece na **faixa "Costurado" do topo
+da lista**, à direita. Se houver mais de uma faixa, use a de cima.
 
 ## 3:00 – 4:20 · Histórico unificado
 
@@ -138,14 +195,15 @@ Ao costurar o segundo, o terceiro par **desaparece sozinho da fila**. Vale apont
 > do MV, a biópsia e o hemograma vêm do laboratório. Um histórico só, com a procedência de
 > cada linha rastreada até o sistema de origem."
 
-**Ação:** clicar em **Antes da Sutura**. *(o momento da virada)*
+**Onde clicar:** **Antes da Sutura**, o botão da **esquerda** no par de botões do **canto
+superior direito** da tela, na mesma altura do título. *(o momento da virada)*
 
 > "E é assim que essa paciente existe hoje. Três cadastros, três grafias diferentes do
 > nome, e cada sistema enxergando quatro, seis, dois eventos de um histórico de doze. O
 > oncologista não vê o ecocardiograma que o hospital pediu. O hospital não sabe em que
 > ciclo ela está. E ninguém está errado — cada um está fazendo o certo com o pedaço que tem."
 
-**Ação:** voltar para **Com a Sutura**.
+**Onde clicar:** **Com a Sutura**, o botão da **direita** no mesmo par.
 
 ## 4:20 – 5:00 · Fechamento
 
@@ -160,6 +218,30 @@ Ao costurar o segundo, o terceiro par **desaparece sozinho da fila**. Vale apont
 > "A gente não é mais um sistema. A gente é a costura entre eles."
 
 ---
+
+
+---
+
+## Mapa de cliques — para bater o olho durante a demonstração
+
+| # | Tela | Onde | O que acontece |
+|---|---|---|---|
+| 1 | Conexões | **Sincronizar agora** — rodapé do cartão do **Tasy**, coluna direita, primeira linha. Único cartão com botão | Faixa amarela: "2 registros novos e 3 eventos"; pendentes 8 → 10 |
+| 2 | Conexões | **Ver fila de identificação →** — ponta direita da faixa amarela | Vai para a fila |
+| 3 | Identificação | Cabeçalho do card **SEBASTIÃO** (4º, score 99) | Abre a comparação campo a campo |
+| 4 | Identificação | **Costurar registros** — verde, canto inferior esquerdo da área aberta | Card sai; fila 10 → 9 |
+| 5 | Identificação | Cabeçalho do card **JOÃO CARLOS FERREIRA** (último, score 10) | Abre a comparação |
+| 6 | Identificação | **São pessoas diferentes** — aqui é o botão **verde, à esquerda** (invertido) | Card sai; fila 9 → 8 |
+| 7 | Identificação | Cabeçalho do card **MARIA (MV)** de score 100, o primeiro da lista | Abre |
+| 8 | Identificação | **Costurar registros** | Card sai |
+| 9 | Identificação | Cabeçalho do outro card **MARIA (MV)**, score 94 | Abre |
+| 10 | Identificação | **Costurar registros** | Saem **dois** cards: esse e o par Tasy × Lab |
+| 11 | Identificação | **Ver histórico unificado →** — na faixa "Costurado" do topo | Vai para o histórico |
+| 12 | Paciente | **Antes da Sutura** — botão da esquerda, canto superior direito | Três colunas fragmentadas |
+| 13 | Paciente | **Com a Sutura** — botão da direita | Volta para a linha do tempo |
+
+Treze cliques. Se perder o fio, a regra é: **procure pelo nome, não pela posição** — a ordem
+da lista muda conforme você decide.
 
 ## Se algo der errado
 
