@@ -34,24 +34,32 @@ COMMIT;
 DELETE FROM vinculo_registro WHERE registro_origem_id <> 1;
 COMMIT;
 
--- 3. Eventos que chegaram por ingestão
+-- 3. Pacientes mestres criados durante a demonstração.
+--    Costurar dois registros que ainda não pertenciam a ninguém cria um paciente mestre
+--    novo. Sem esta limpeza eles sobram como órfãos, um a cada rodada de demonstração.
+--    Só o mestre 1 (Maria Aparecida) vem do seed e permanece.
+DELETE FROM paciente_mestre WHERE id <> 1;
+COMMIT;
+
+-- 4. Eventos que chegaram por ingestão
 DELETE FROM evento_clinico
  WHERE registro_origem_id IN (
        SELECT id FROM registro_origem WHERE identificador_origem LIKE 'FHIR/%');
 COMMIT;
 
--- 4. Registros que chegaram por ingestão
+-- 5. Registros que chegaram por ingestão
 DELETE FROM registro_origem WHERE identificador_origem LIKE 'FHIR/%';
 COMMIT;
 
--- 5. Horários de sincronização, para a tela não exibir uma corrida de ontem
+-- 6. Horários de sincronização, para a tela não exibir uma corrida de ontem
 UPDATE sistema_origem SET ultima_sync = SYSTIMESTAMP     WHERE codigo <> 'LEGADO';
 UPDATE sistema_origem SET ultima_sync = SYSTIMESTAMP - 1 WHERE codigo =  'LEGADO';
 COMMIT;
 
--- Conferência: o esperado é 15 registros, 1 vínculo, 0 decisões e 12 eventos.
+-- Conferência: o esperado é 15 registros, 1 vínculo, 1 paciente mestre, 0 decisões e 12 eventos.
 SELECT (SELECT COUNT(*) FROM registro_origem)       AS registros,
        (SELECT COUNT(*) FROM vinculo_registro)      AS vinculos,
+       (SELECT COUNT(*) FROM paciente_mestre)       AS mestres,
        (SELECT COUNT(*) FROM decisao_identificacao) AS decisoes,
        (SELECT COUNT(*) FROM evento_clinico)        AS eventos
   FROM dual;
