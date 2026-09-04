@@ -7,6 +7,7 @@ Material da demonstração da Sutura, para a versão **ligada ao Oracle Autonomo
 | Arquivo | O que mostra |
 |---|---|
 | [roteiro-demo.md](roteiro-demo.md) | Roteiro cronometrado de 5 minutos: preparação, falas, cliques na ordem, plano B e as perguntas prováveis com resposta |
+| [roteiro-video-pitch.md](roteiro-video-pitch.md) | Roteiro do vídeo pitch de 13/09: orçamento de tempo por bloco, texto para narrar e o que cortar se estourar |
 | [glossario.md](glossario.md) | Os termos técnicos do roteiro explicados, cada um com a frase pronta para responder na hora |
 | [perguntas-mentoria.md](perguntas-mentoria.md) | O que perguntar aos mentores — e o que não perguntar |
 | `01-conexoes.png` | Hub de conexões — MV, Tasy, laboratório e a planilha legada, com os volumes reais do banco |
