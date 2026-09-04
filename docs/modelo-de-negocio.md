@@ -30,8 +30,50 @@ O recorte próprio é o que segue: EMPI costuma ser produto de rede hospitalar g
 de implantação longa. A Sutura mira **clínicas e hospitais de médio porte**, que têm o
 mesmo problema e não têm o mesmo orçamento.
 
-`[PREENCHER]` — levantar dois ou três fornecedores de EMPI e como se posicionam. Serve para
-a pergunta "quem mais faz isso?", que virá.
+### Quem mais faz isso
+
+A pergunta virá, e a resposta honesta ajuda mais que fingir que não há ninguém.
+
+**Lá fora, a categoria é madura.** Entre os fornecedores de EMPI aparecem NextGate,
+Verato, InterSystems (HealthShare Patient Index), Experian Health, 4medica, Rhapsody e
+Just Associates. Existe até uma implementação de código aberto, o OpenEMPI.
+
+Isso é **bom para vocês**, não ruim: prova que o problema é real e que há mercado disposto
+a pagar por ele. Ninguém constrói sete produtos para uma dor inventada.
+
+**No Brasil o espaço é menos povoado.** O mais próximo que encontramos é a **Nuria**, que
+se posiciona como plataforma de interoperabilidade com prontuário unificado sobre
+repositório HL7 FHIR, integrando prontuário, laboratório e PACS. Atua desde 2012 e cita a
+Rede Mater Dei como referência.
+
+> **Ressalva:** no material público consultado, a Nuria **não destaca identificação única
+> de paciente como funcionalidade separada** — o foco declarado é integração e prontuário
+> unificado. Isso não significa que não façam; significa que não é o que comunicam. Antes
+> de afirmar qualquer coisa numa banca, confirmem no site atual deles.
+
+Também aparecem no espaço adjacente a Dataopera (DTO Health) e a Sensedia, esta última com
+gestão de APIs e não específica de saúde.
+
+### Onde a Sutura se encaixa
+
+| Concorrente | Posição dele | Posição da Sutura |
+|---|---|---|
+| **EMPI internacional** (NextGate, Verato) | Grandes redes, implantação longa, preço em dólar | Médio porte brasileiro, CNS e CPF como âncoras, preço local |
+| **Nuria e similares** | Interoperabilidade e prontuário unificado, foco em grandes redes | Identidade do paciente como produto, não como consequência |
+| **Os próprios ERPs** (MV, Tasy, TOTVS) | Resolvem dentro do próprio sistema | Resolvem entre sistemas — inclusive entre concorrentes |
+| **OpenEMPI** (código aberto) | Gratuito, sem suporte, sem adaptação ao Brasil | Produto operado, com CNS e as deformações de dado brasileiras |
+| **Não fazer nada** | Planilha e conferência manual | É contra isso que a venda acontece de verdade |
+
+**As duas respostas difíceis, e vale ter prontas:**
+
+*"Por que não usar o OpenEMPI, que é de graça?"* — Porque software livre de EMPI não conhece
+CNS, não conhece as deformações de cadastro brasileiras e não vem com quem opere. O custo de
+adaptar e manter supera o de assinar.
+
+*"E se o MV ou o Tasy fizerem isso?"* — Cada um resolveria dentro do próprio sistema, e o
+problema do cliente é justamente ter cinco sistemas de fornecedores diferentes. Um ERP não
+tem incentivo para unificar dado com o concorrente. **É estruturalmente mais fácil para um
+terceiro neutro.**
 
 ---
 
@@ -97,7 +139,7 @@ A conta que se sustenta é a de um cliente só:
 
 ```
 Guias emitidas por mês                    [PREENCHER]
-× taxa de glosa                           [PREENCHER]  % das guias
+× taxa de glosa                           15,89% em 2024 (Anahp, ver abaixo)
 × valor médio da guia                     [PREENCHER]  R$
 = perda mensal com glosa                  R$ ____
 
@@ -324,6 +366,12 @@ Honestidade sobre os buracos, porque a banca vai achar de qualquer jeito:
 - **Distribuição de hospitais por porte** — CNES 2024, via Observatório Hospitalar da
   Fiocruz, <https://observatoriohospitalar.fiocruz.br/>
 - **Base primária** — CNES/DATASUS, <https://cnes.datasus.gov.br>
+- **Fornecedores de EMPI** — levantamento a partir de
+  <https://www.featuredcustomers.com/software/enterprise-master-patient-index-software> e
+  <https://www.intersystems.com/products/healthshare/intersystems-empi/>; implementação
+  aberta em <https://www.openempi.org/>
+- **Nuria** — posicionamento declarado em
+  <https://nuria.com.br/interoperabilidade-como-agente-transformador-da-saude>
 
 Antes de usar qualquer número no vídeo, **confira na fonte primária**. Os dados aqui vieram
 de reportagens que citam as publicações; para um pitch avaliado por gente do setor, cite a
