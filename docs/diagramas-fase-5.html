@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sutura — Diagramas da Fase 5</title>
+<style>
+  :root {
+    --bg: #eef2f6;
+    --surface: #ffffff;
+    --surface-2: #f8fafc;
+    --line: #e2e8f0;
+    --line-strong: #cbd5e1;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --muted: #64748b;
+    --brand: #0f766e;
+    --brand-deep: #0b4f4a;
+    --brand-soft: #d7f2ee;
+    --nav: #0a1f2b;
+    --nav-2: #103041;
+    --nav-ink: #cfe3ea;
+    --ok: #047857;
+    --ok-soft: #d8f3e6;
+    --warn: #b45309;
+    --warn-soft: #fdf0d5;
+    --danger: #b3261e;
+    --danger-soft: #fbe3e1;
+    --r: 10px;
+    --r-lg: 14px;
+    --shadow: 0 1px 2px rgba(15,23,42,.06), 0 4px 12px rgba(15,23,42,.05);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 15.5px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- cabeçalho ---------- */
+
+  header.topo {
+    background: linear-gradient(160deg, var(--nav) 0%, var(--nav-2) 100%);
+    color: #fff;
+    padding: 40px 34px 34px;
+  }
+
+  header.topo .interno { max-width: 1440px; margin: 0 auto; }
+
+  .eyebrow {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #7fd4c8;
+  }
+
+  header.topo h1 {
+    margin: 8px 0 0;
+    font-size: 32px;
+    font-weight: 650;
+    letter-spacing: -.015em;
+  }
+
+  header.topo .sub {
+    margin: 10px 0 0;
+    color: var(--nav-ink);
+    font-size: 16px;
+    max-width: 70ch;
+  }
+
+  /* ---------- layout ---------- */
+
+  main {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 34px 72px;
+  }
+
+  section.bloco {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow);
+    padding: 30px 34px 34px;
+    margin-top: 26px;
+  }
+
+  h2 {
+    margin: 0 0 4px;
+    font-size: 23px;
+    font-weight: 650;
+    letter-spacing: -.012em;
+    line-height: 1.25;
+  }
+
+  h2 .num {
+    display: inline-block;
+    min-width: 30px;
+    color: var(--brand);
+  }
+
+  h3 {
+    margin: 30px 0 10px;
+    font-size: 17px;
+    font-weight: 650;
+    color: var(--ink);
+  }
+
+  .chapeu {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 18px;
+  }
+
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+
+  /* medida de leitura: o texto não acompanha a largura dos diagramas */
+  section.bloco > p,
+  section.bloco > ul,
+  section.bloco > ol,
+  .chapeu,
+  .nota { max-width: 84ch; }
+  li { margin-bottom: 6px; }
+  strong { font-weight: 650; }
+
+  code {
+    font-family: 'Cascadia Mono', Consolas, 'SF Mono', monospace;
+    font-size: .88em;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1px 5px;
+  }
+
+  /* ---------- índice ---------- */
+
+  .indice {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow);
+    padding: 22px 26px;
+    margin-top: -22px;
+    position: relative;
+  }
+
+  .indice ol { margin: 0; padding-left: 20px; }
+  .indice li { margin-bottom: 4px; }
+  .indice a { color: var(--brand-deep); text-decoration: none; font-weight: 600; }
+  .indice a:hover { text-decoration: underline; }
+  .indice .parte { color: var(--muted); font-weight: 400; }
+
+  /* ---------- legenda ---------- */
+
+  .legenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 20px;
+    padding: 14px 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+
+  .swatch {
+    width: 15px; height: 15px;
+    border-radius: 4px;
+    flex: none;
+  }
+
+  .sw-existe { background: #dcfce7; border: 1.5px solid #16a34a; }
+  .sw-desenho { background: #fef9c3; border: 1.5px dashed #ca8a04; }
+  .sw-oracle { background: #fee2e2; border: 1.5px solid #c74634; }
+
+  /* ---------- destaque ---------- */
+
+  .nota {
+    border-left: 4px solid var(--brand);
+    background: var(--brand-soft);
+    border-radius: 0 var(--r) var(--r) 0;
+    padding: 14px 18px;
+    margin: 0 0 18px;
+    font-size: 15px;
+  }
+
+  .nota.aviso {
+    border-left-color: var(--warn);
+    background: var(--warn-soft);
+  }
+
+  .nota p:last-child { margin-bottom: 0; }
+
+  /* ---------- tabelas ---------- */
+
+  .tabela-rolagem { overflow-x: auto; margin: 0 0 18px; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14.5px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 9px 13px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  th {
+    background: var(--surface-2);
+    font-weight: 650;
+    font-size: 13px;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* ---------- diagramas ---------- */
+
+  .diagrama {
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--surface-2);
+    padding: 20px 16px;
+    margin: 0 0 18px;
+    overflow-x: auto;
+    text-align: center;
+  }
+
+  .diagrama svg { max-width: 100%; height: auto; }
+
+  pre.mermaid {
+    margin: 0;
+    font-family: 'Cascadia Mono', Consolas, monospace;
+    font-size: 12.5px;
+    text-align: left;
+    line-height: 1.45;
+    white-space: pre;
+  }
+
+  .falha-mermaid {
+    display: none;
+    margin: 0 0 18px;
+    padding: 14px 18px;
+    border-left: 4px solid var(--danger);
+    background: var(--danger-soft);
+    border-radius: 0 var(--r) var(--r) 0;
+    font-size: 14.5px;
+  }
+
+  body.sem-mermaid .falha-mermaid { display: block; }
+  body.sem-mermaid .diagrama { background: #fff; }
+
+  footer {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 26px 34px 60px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  footer a { color: var(--brand-deep); }
+
+  /* ---------- impressão ---------- */
+
+  @media print {
+    body { background: #fff; font-size: 11pt; }
+    header.topo { background: #0a1f2b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    section.bloco { box-shadow: none; break-inside: avoid; page-break-inside: avoid; margin-top: 14px; }
+    .diagrama { break-inside: avoid; page-break-inside: avoid; }
+    .indice { break-after: page; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="interno">
+    <div class="eyebrow">Sutura &middot; Fase 5 &middot; Enterprise Challenge / Startup One</div>
+    <h1>Diagramas do projeto</h1>
+    <p class="sub">
+      Rich Picture e mapa de stakeholders atualizados, jornada do usuário, fluxograma do MVP,
+      arquitetura com a integração Oracle e o caminho de escala. Documento de 08/09/2026.
+    </p>
+  </div>
+</header>
+
+<main>
+
+  <nav class="indice">
+    <ol>
+      <li><a href="#d1">Rich Picture atualizado</a> <span class="parte">— Parte 2, validação estruturada</span></li>
+      <li><a href="#d2">Mapa de stakeholders atualizado</a> <span class="parte">— Parte 2, validação estruturada</span></li>
+      <li><a href="#d3">Jornada do usuário e fluxograma do MVP</a> <span class="parte">— Parte 3, estruturação da solução</span></li>
+      <li><a href="#d4">Arquitetura e integração Oracle</a> <span class="parte">— Parte 4, estrutura tecnológica</span></li>
+      <li><a href="#d5">Como a solução escala</a> <span class="parte">— Parte 4, estrutura tecnológica</span></li>
+    </ol>
+  </nav>
+
+  <section class="bloco">
+    <h2>Convenção de cor</h2>
+    <p class="chapeu">Vale para todos os diagramas desta página.</p>
+    <div class="legenda">
+      <span class="chip"><span class="swatch sw-existe"></span> Existe e roda hoje</span>
+      <span class="chip"><span class="swatch sw-desenho"></span> Desenho, ainda não implementado</span>
+      <span class="chip"><span class="swatch sw-oracle"></span> Recurso Oracle em produção</span>
+    </div>
+    <p>
+      A separação é deliberada. O resto da documentação do projeto declara o que não existe em vez de
+      esconder — e os diagramas seguem a mesma regra. O modelo de dados (diagrama ER) e o diagrama de
+      sequência da ingestão não são repetidos aqui: estão em <code>docs/arquitetura.md</code>, seções 3 e 4,
+      e continuam válidos.
+    </p>
+    <div class="falha-mermaid">
+      <strong>Os diagramas não puderam ser desenhados.</strong> A biblioteca de renderização não carregou —
+      o arquivo <code>mermaid.min.js</code> não está na mesma pasta e não houve acesso à internet.
+      O código-fonte de cada diagrama continua legível abaixo, e a versão em Markdown está em
+      <code>docs/diagramas-fase-5.md</code>.
+    </div>
+  </section>
+
+  <!-- ============================ 1 ============================ -->
+  <section class="bloco" id="d1">
+    <h2><span class="num">1</span>Rich Picture atualizado</h2>
+    <p class="chapeu">Parte 2 &middot; Os três blocos de sempre — dor, camada, resultado — com o que a validação acrescentou.</p>
+
+    <div class="diagrama">
+<pre class="mermaid">
+flowchart TB
+    subgraph dor["🔴 Hoje, dentro da unidade de saúde"]
+        D1["Sistemas ilhados&lt;br/&gt;MV, Tasy, laboratório, planilha"]
+        D2["Prontuário por atendimento,&lt;br/&gt;não por pessoa"]
+        D3["Equipe administrativa&lt;br/&gt;+50h/mês costurando na mão"]
+        D4["Glosa: 11,89% para 15,89%&lt;br/&gt;em dois anos (Anahp 2025)"]
+        D5["Exame repetido,&lt;br/&gt;história recontada"]
+    end
+
+    subgraph sutura["🟦 A camada Sutura — EMPI + integração"]
+        C1["Conectores&lt;br/&gt;FHIR R4 · HL7 v2 · CSV"]
+        C2["Registro de origem&lt;br/&gt;payload bruto preservado"]
+        C3["Motor de identificação&lt;br/&gt;no Oracle · UTL_MATCH"]
+        C4["Fila de decisão humana&lt;br/&gt;recomenda, não decide"]
+        C5["Histórico unificado&lt;br/&gt;derivado dos vínculos"]
+        C6["Trilha de auditoria&lt;br/&gt;quem, quando, contra o quê"]
+        C7["Automação de back-office&lt;br/&gt;e prevenção de glosa"]
+
+        C1 --&gt; C2 --&gt; C3 --&gt; C4 --&gt; C5
+        C4 --&gt; C6
+        C5 -.-&gt; C7
+    end
+
+    subgraph result["🟢 Resultado"]
+        R1["Um paciente,&lt;br/&gt;um histórico"]
+        R2["Cadastro limpo&lt;br/&gt;antes de faturar"]
+        R3["Equipe liberada&lt;br/&gt;do trabalho manual"]
+        R4["Decisão de identidade&lt;br/&gt;defensável em auditoria e LGPD"]
+    end
+
+    IA["Ferramentas clínicas de IA&lt;br/&gt;(ex.: Sofya)&lt;br/&gt;recebem dado limpo e unificado"]
+    TI["TI e fornecedor do ERP&lt;br/&gt;autorizam a integração"]
+
+    dor --&gt; sutura --&gt; result
+    sutura -.-&gt;|"dado limpo como insumo"| IA
+    TI -.-&gt;|"libera a API — maior risco do negócio"| sutura
+
+    classDef existe fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef desenho fill:#fef9c3,stroke:#ca8a04,stroke-dasharray: 4 3,color:#713f12
+    classDef novo fill:#e0e7ff,stroke:#4f46e5,color:#312e81
+
+    class C1,C2,C3,C4,C5,C6 existe
+    class C7 desenho
+    class IA,TI novo
+</pre>
+    </div>
+
+    <h3>O que mudou em relação à versão anterior</h3>
+    <div class="tabela-rolagem">
+      <table>
+        <thead><tr><th>Mudança</th><th>De onde veio</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>TI / fornecedor do ERP entrou como bloqueador explícito</strong></td>
+            <td>É a pergunta que mais aparece: “os ERPs vão deixar vocês integrarem?”. Está registrado como o maior risco do negócio e agora aparece no desenho, em vez de ficar implícito.</td>
+          </tr>
+          <tr>
+            <td><strong>IA clínica virou destino do dado, não concorrente</strong></td>
+            <td>Mata o argumento de “isso já existe”. A Sutura entrega o insumo que essas ferramentas hoje recebem sujo.</td>
+          </tr>
+          <tr>
+            <td><strong>A glosa saiu do centro e virou camada derivada</strong></td>
+            <td>Ela é o que fala com quem assina o contrato, mas não foi construída. Aparece tracejada, na posição real: em cima do dado unificado.</td>
+          </tr>
+          <tr>
+            <td><strong>A dor ganhou número com fonte</strong></td>
+            <td>11,89% → 15,89% de glosa inicial gerencial, Observatório Anahp 2025. Dor sem fonte não sobrevive à primeira pergunta de quem conhece o setor.</td>
+          </tr>
+          <tr>
+            <td><strong>Auditoria virou resultado, não detalhe técnico</strong></td>
+            <td>Para dado de saúde, rastrear quem decidiu o quê é condição de entrada — não recurso.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================ 2 ============================ -->
+  <section class="bloco" id="d2">
+    <h2><span class="num">2</span>Mapa de stakeholders atualizado</h2>
+    <p class="chapeu">Parte 2 &middot; Dois cortes: quem decide, e quem troca o quê com quem.</p>
+
+    <h3>2.1 &nbsp;Poder × interesse</h3>
+    <div class="diagrama">
+<pre class="mermaid">
+quadrantChart
+    title Stakeholders da Sutura por poder de decisão e interesse na dor
+    x-axis Baixo interesse --&gt; Alto interesse
+    y-axis Baixo poder --&gt; Alto poder
+    quadrant-1 Gerenciar de perto
+    quadrant-2 Manter satisfeito
+    quadrant-3 Monitorar
+    quadrant-4 Manter informado
+    Diretoria executiva: [0.55, 0.93]
+    Faturamento: [0.88, 0.62]
+    TI do cliente: [0.70, 0.72]
+    Fornecedor do ERP: [0.22, 0.86]
+    Diretoria clínica: [0.66, 0.55]
+    Reguladores ANS e LGPD: [0.30, 0.78]
+    Operadora de saúde: [0.56, 0.42]
+    Equipe assistencial: [0.78, 0.28]
+    Paciente: [0.86, 0.12]
+    Oracle: [0.40, 0.34]
+    IA clínica parceira: [0.56, 0.20]
+</pre>
+    </div>
+
+    <p>
+      <strong>Como ler:</strong> o eixo horizontal é quanto o ator sente a dor; o vertical é quanto ele pode
+      travar ou aprovar o projeto. Os dois quadrantes de cima são os que decidem o destino da venda.
+    </p>
+
+    <h3>2.2 &nbsp;Quem troca o quê com quem</h3>
+    <div class="diagrama">
+<pre class="mermaid">
+flowchart TB
+    subgraph cliente["Cliente — clínica ou hospital de médio porte"]
+        EXEC["Diretoria executiva&lt;br/&gt;assina o contrato"]
+        FAT["Faturamento&lt;br/&gt;porta de entrada da venda"]
+        TIC["TI do cliente&lt;br/&gt;opera a conexão"]
+        CLIN["Diretoria clínica&lt;br/&gt;e equipe assistencial"]
+    end
+
+    SUT["SUTURA"]
+
+    subgraph fora["Fora do cliente"]
+        ERP["Fornecedores de ERP&lt;br/&gt;MV · Tasy · legado"]
+        OPER["Operadoras e convênios"]
+        REG["ANS/TISS · LGPD/ANPD"]
+        ORA["Oracle&lt;br/&gt;parceira de tecnologia"]
+        IAC["IA clínica parceira"]
+        PAC["Paciente&lt;br/&gt;beneficiário final"]
+    end
+
+    FAT --&gt;|"a dor em reais"| EXEC
+    EXEC --&gt;|"assinatura + conector"| SUT
+    SUT --&gt;|"cadastro limpo"| FAT
+    TIC --&gt;|"autoriza a conexão"| SUT
+    SUT --&gt;|"menos chamado"| TIC
+    SUT --&gt;|"histórico único"| CLIN
+
+    ERP --&gt;|"libera (ou não) a API"| TIC
+    SUT &lt;--&gt;|"FHIR / HL7 / CSV"| ERP
+    SUT --&gt;|"faturamento consistente"| OPER
+    REG --&gt;|"rastreabilidade e LGPD"| SUT
+    ORA --&gt;|"Autonomous DB e OCI"| SUT
+    SUT -.-&gt;|"dado limpo"| IAC
+    CLIN --&gt;|"histórico completo"| PAC
+
+    classDef ganha fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef risco fill:#fef9c3,stroke:#ca8a04,color:#713f12
+    classDef nos fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+
+    class EXEC,SUT nos
+    class FAT,TIC ganha
+    class ERP,REG risco
+    class CLIN,PAC,OPER,ORA,IAC ganha
+</pre>
+    </div>
+
+    <h3>2.3 &nbsp;O que a validação mudou na leitura dos stakeholders</h3>
+    <div class="tabela-rolagem">
+      <table>
+        <thead><tr><th>Stakeholder</th><th>Leitura anterior</th><th>Leitura depois da validação</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Faturamento</strong></td><td>Um beneficiário entre outros</td><td><strong>É a porta de entrada.</strong> É o único que coloca a dor em reais dentro de uma reunião de orçamento.</td></tr>
+          <tr><td><strong>Diretoria clínica</strong></td><td>Comprador provável</td><td>Convence, mas <strong>não aprova verba sozinha</strong>. Influencia; não assina.</td></tr>
+          <tr><td><strong>Fornecedor do ERP</strong></td><td>Não aparecia</td><td><strong>Alto poder, baixo interesse</strong> — o pior quadrante possível. Pode travar sem sentir dor nenhuma.</td></tr>
+          <tr><td><strong>TI do cliente</strong></td><td>Obstáculo</td><td><strong>Aliado</strong>, desde que a integração reduza chamado em vez de criar mais um sistema para manter.</td></tr>
+          <tr><td><strong>Paciente</strong></td><td>Centro do discurso</td><td>Máximo interesse, <strong>poder zero</strong>. Sensibiliza a banca, não fecha contrato.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="nota">
+      <p>
+        <strong>Consequência prática no produto:</strong> a tela que fala com quem assina é a de <strong>glosa</strong>,
+        e ela não existe. A tela de identificação — que é a construída — fala com TI e com a diretoria clínica,
+        que influenciam mas não decidem. Isso está assumido, não escondido.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================ 3 ============================ -->
+  <section class="bloco" id="d3">
+    <h2><span class="num">3</span>Jornada do usuário e fluxograma do MVP</h2>
+    <p class="chapeu">Parte 3 &middot; Quem usa, o que sente, e por onde passa.</p>
+
+    <h3>3.1 &nbsp;A persona operadora</h3>
+    <p>
+      <strong>Renata, analista de cadastro e faturamento</strong> de uma clínica oncológica de médio porte com
+      quatro sistemas (MV, Tasy, laboratório e uma planilha de faturamento). É quem hoje faz na mão o trabalho
+      que o MVP automatiza — e quem sente a glosa por erro de cadastro voltar para a mesa dela.
+    </p>
+
+    <h3>3.2 &nbsp;Jornada — antes e depois</h3>
+    <div class="diagrama">
+<pre class="mermaid">
+journey
+    title Jornada da analista de cadastro e faturamento
+    section Hoje, sem a Sutura
+      Acha a duplicata: 2: Renata
+      Abre 4 sistemas: 1: Renata
+      Compara no olho: 1: Renata
+      Decide sem rastro: 2: Renata
+      Guia volta glosada: 1: Renata
+    section Com a Sutura, no MVP
+      Sincroniza: 5: Renata
+      Fila por score: 5: Renata
+      Compara os campos: 4: Renata
+      Costura ou separa: 5: Renata
+      Decisão auditada: 4: Renata
+      Histórico pronto: 5: Renata
+</pre>
+    </div>
+
+    <h3>3.3 &nbsp;Fluxograma da jornada principal — o caminho do MVP</h3>
+    <p>
+      O caminho azul é o percurso da usuária; as caixas cinzas mostram o que o sistema faz por baixo,
+      para deixar claro onde a decisão é da máquina e onde é da pessoa.
+    </p>
+    <div class="diagrama">
+<pre class="mermaid">
+flowchart TD
+    START(["Renata abre a Sutura"]) --&gt; CONEX["TELA · Conexões&lt;br/&gt;quatro sistemas, volume ingerido,&lt;br/&gt;pendentes de identificação"]
+
+    CONEX --&gt; SYNC{"Há dado novo&lt;br/&gt;para trazer?"}
+    SYNC --&gt;|"Sincronizar agora"| ING["Sistema recebe Bundle FHIR R4"]
+    SYNC --&gt;|"não"| FILA
+
+    ING --&gt; PARSE["Parser extrai Patient,&lt;br/&gt;Procedure, Observation"]
+    PARSE --&gt; GRAVA[("Grava registro_origem&lt;br/&gt;+ payload bruto preservado")]
+    GRAVA --&gt; MOTOR["Motor no Oracle recalcula os pares&lt;br/&gt;blocking por CNS, CPF, nascimento, SOUNDEX&lt;br/&gt;score Jaro-Winkler 0 a 100"]
+    MOTOR --&gt; AVISO["Faixa: '2 registros novos e 3 eventos'&lt;br/&gt;pendentes 8 para 10"]
+    AVISO --&gt; FILA
+
+    FILA["TELA · Identificação&lt;br/&gt;fila ordenada por score"] --&gt; ABRE["Renata abre um par&lt;br/&gt;comparação campo a campo"]
+
+    ABRE --&gt; PISO{"Evidência comparável&lt;br/&gt;maior ou igual a 60 pontos?"}
+    PISO --&gt;|"não"| REVISAO["Sem recomendação automática&lt;br/&gt;vai para revisão humana obrigatória"]
+    PISO --&gt;|"sim"| REC{"Recomendação&lt;br/&gt;do motor"}
+
+    REC --&gt;|"score alto&lt;br/&gt;ex.: 99 — cedilha no nome da mãe"| SUG1["Sugere costurar&lt;br/&gt;botão verde à esquerda"]
+    REC --&gt;|"score baixo&lt;br/&gt;ex.: 10 — homônimo"| SUG2["Sugere manter separado&lt;br/&gt;botões invertidos na tela"]
+
+    SUG1 --&gt; DEC
+    SUG2 --&gt; DEC
+    REVISAO --&gt; DEC
+
+    DEC{"A DECISÃO É DA PESSOA&lt;br/&gt;a máquina só recomenda"}
+    DEC --&gt;|"Costurar registros"| VINC["Cria vinculo_registro&lt;br/&gt;UNIQUE por registro"]
+    DEC --&gt;|"São pessoas diferentes"| SEP["Registra a separação"]
+
+    VINC --&gt; AUD
+    SEP --&gt; AUD
+    AUD[("Auditoria: usuário, momento,&lt;br/&gt;score e recomendação da máquina&lt;br/&gt;inclusive ao separar")]
+
+    AUD --&gt; LIMPA["Pares já resolvidos&lt;br/&gt;somem da fila sozinhos"]
+    LIMPA --&gt; MAIS{"Fila&lt;br/&gt;vazia?"}
+    MAIS --&gt;|"não"| ABRE
+    MAIS --&gt;|"sim"| HIST
+
+    HIST["TELA · Paciente&lt;br/&gt;histórico unificado, derivado dos vínculos"]
+    HIST --&gt; TOGGLE["Alterna 'Antes da Sutura' e 'Com a Sutura'&lt;br/&gt;4 eventos fragmentados para 12 em uma linha do tempo&lt;br/&gt;procedência de cada evento rastreada"]
+    TOGGLE --&gt; FIM(["Cadastro consistente&lt;br/&gt;antes de faturar"])
+
+    FIM -.-&gt;|"fora do MVP"| GLOSA["Camada de prevenção de glosa&lt;br/&gt;e automação de back-office"]
+
+    classDef usuaria fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef sistema fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    classDef decisao fill:#fce7f3,stroke:#db2777,color:#831843
+    classDef banco fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef futuro fill:#fef9c3,stroke:#ca8a04,stroke-dasharray: 4 3,color:#713f12
+
+    class CONEX,FILA,ABRE,HIST,TOGGLE usuaria
+    class ING,PARSE,MOTOR,AVISO,SUG1,SUG2,REVISAO,LIMPA sistema
+    class SYNC,PISO,REC,DEC,MAIS decisao
+    class GRAVA,VINC,SEP,AUD banco
+    class GLOSA futuro
+</pre>
+    </div>
+
+    <h3>3.4 &nbsp;As três funcionalidades essenciais do MVP</h3>
+    <p>O fluxograma acima tem exatamente três blocos, e nenhum a mais:</p>
+    <ol>
+      <li><strong>Conectar e ingerir</strong> — receber documentos dos sistemas de origem preservando o original. Sem isso não há o que unificar.</li>
+      <li><strong>Identificar com decisão humana</strong> — recomendar, comparar campo a campo, exigir que uma pessoa decida e gravar a decisão. É o coração.</li>
+      <li><strong>Entregar o histórico unificado</strong> — a linha do tempo que só existe porque as costuras aconteceram, com a procedência de cada evento.</li>
+    </ol>
+
+    <div class="nota">
+      <p>
+        <strong>O diferencial competitivo está nos dois nós rosa do fluxograma:</strong> o piso de evidência
+        (score alto com pouca informação não é confiança, é ilusão) e a decisão humana auditada.
+        Concorrente que costura sozinho é mais fácil de vender e impossível de defender diante de quem
+        responde por risco clínico.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================ 4 ============================ -->
+  <section class="bloco" id="d4">
+    <h2><span class="num">4</span>Arquitetura e integração Oracle</h2>
+    <p class="chapeu">Parte 4 &middot; Onde cada peça roda, e o que é Oracle de verdade.</p>
+
+    <div class="diagrama">
+<pre class="mermaid">
+flowchart TB
+    subgraph origem["Sistemas de origem — dentro do cliente"]
+        MV["MV SOUL&lt;br/&gt;REST + HL7 v2"]
+        TASY["Philips Tasy&lt;br/&gt;REST + FHIR R4"]
+        LAB["Lab Alpha&lt;br/&gt;HL7 v2 ORU"]
+        CSV["SGH Legado&lt;br/&gt;CSV manual"]
+    end
+
+    subgraph conexao["Modos de conexão — como o dado entra"]
+        PUSH["Push do ERP&lt;br/&gt;POST /v1/ingest/fhir"]
+        PULL["Pull agendado"]
+        AGENTE["Agente na rede do cliente&lt;br/&gt;conexão que o hospital controla"]
+    end
+
+    WEB["Front — Angular 21&lt;br/&gt;Conexões · Identificação · Paciente"]
+    API["API — Spring Boot 3.5 / Java 21&lt;br/&gt;ingestão · orquestração · histórico&lt;br/&gt;parser isolado em uma classe"]
+
+    subgraph adb["Oracle Autonomous Database 26ai — em produção hoje"]
+        SCHEMA[("Schema versionado&lt;br/&gt;8 migrations Flyway")]
+        MATCH["UTL_MATCH.JARO_WINKLER_SIMILARITY&lt;br/&gt;motor de identificação como view&lt;br/&gt;blocking em 4 ramos UNION"]
+        RAW[("payload_bruto&lt;br/&gt;documento original preservado")]
+        AUDIT[("decisao_identificacao&lt;br/&gt;trilha de auditoria")]
+    end
+
+    subgraph road["Roadmap na Oracle Cloud"]
+        SAFE["OCI Data Safe&lt;br/&gt;mascarar dado sensível&lt;br/&gt;fora de produção · LGPD"]
+        DOCU["OCI Document Understanding&lt;br/&gt;ler guia de faturamento"]
+        VECTOR["AI Vector Search 26ai&lt;br/&gt;similaridade de nomes,&lt;br/&gt;se superar o Jaro-Winkler"]
+    end
+
+    IAC["Ferramentas clínicas de IA&lt;br/&gt;consomem dado unificado"]
+
+    MV --&gt; PUSH
+    TASY --&gt; PUSH
+    LAB --&gt; PULL
+    CSV --&gt; AGENTE
+    PUSH --&gt; API
+    PULL --&gt; API
+    AGENTE --&gt; API
+
+    WEB --&gt;|HTTP| API
+    API --&gt;|"JDBC + wallet mTLS"| SCHEMA
+    SCHEMA --&gt; MATCH
+    SCHEMA --&gt; RAW
+    MATCH --&gt; AUDIT
+
+    SCHEMA -.-&gt; SAFE
+    API -.-&gt; DOCU
+    MATCH -.-&gt; VECTOR
+    API -.-&gt; IAC
+
+    classDef existe fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef desenho fill:#fef9c3,stroke:#ca8a04,stroke-dasharray: 4 3,color:#713f12
+    classDef oracle fill:#fee2e2,stroke:#c74634,color:#7f1d1d
+
+    class MV,TASY,PUSH,WEB,API existe
+    class SCHEMA,MATCH,AUDIT,RAW oracle
+    class LAB,CSV,PULL,AGENTE,SAFE,DOCU,VECTOR,IAC desenho
+</pre>
+    </div>
+
+    <h3>4.1 &nbsp;A tecnologia Oracle incorporada, e por que ela</h3>
+    <p>
+      <strong>O que está em produção hoje: Oracle Autonomous Database 26ai</strong> (Always Free, workload
+      <em>Transaction Processing</em>, região São Paulo), e não apenas como lugar onde guardar linhas.
+    </p>
+    <div class="nota">
+      <p>
+        <strong>O motor de identificação não está na API — está no banco.</strong> É uma view, não código Java.
+        A API orquestra e traduz; quem compara pacientes é o Oracle, com <code>UTL_MATCH</code>.
+      </p>
+    </div>
+    <p>
+      <strong>A justificativa é de engenharia, não de patrocínio.</strong>
+      <code>UTL_MATCH.JARO_WINKLER_SIMILARITY</code> é função nativa do Oracle. Trazer centenas de milhares de
+      registros para a JVM só para comparar texto seria desperdiçar exatamente aquilo que um banco faz bem.
+      A escolha tem número medido do lado dela:
+    </p>
+    <div class="tabela-rolagem">
+      <table>
+        <thead><tr><th>Evidência</th><th>Valor</th></tr></thead>
+        <tbody>
+          <tr><td>Registros na carga sintética</td><td class="num">19.999</td></tr>
+          <tr><td>Pares avaliados</td><td class="num">608.194</td></tr>
+          <tr><td>Tempo total, em 1 OCPU</td><td class="num"><strong>21,3 segundos</strong></td></tr>
+          <tr><td>Falsos positivos</td><td class="num"><strong>0</strong></td></tr>
+          <tr><td>Redução do espaço de busca pelo blocking</td><td class="num"><strong>99,0%</strong></td></tr>
+          <tr><td>Ganho ao trocar <code>OR</code> por <code>UNION</code> no blocking</td><td class="num"><strong>197×</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="nota aviso">
+      <p>
+        <strong>Vale dizer o que não é diferencial:</strong> “usamos Oracle Cloud” não é argumento — qualquer um usa.
+        O argumento é que o record linkage roda <strong>dentro</strong> do banco, com uma função nativa, e que existe
+        medição publicada em vez de opinião. Isso é outra frase.
+      </p>
+    </div>
+
+    <h3>4.2 &nbsp;O que o Autonomous entrega além do armazenamento</h3>
+    <div class="tabela-rolagem">
+      <table>
+        <thead><tr><th>Recurso usado</th><th>O que resolve no projeto</th></tr></thead>
+        <tbody>
+          <tr><td><code>UTL_MATCH</code> (Jaro-Winkler nativo)</td><td>O motor de comparação, sem trafegar dado para a aplicação</td></tr>
+          <tr><td><code>SOUNDEX</code> + índices</td><td>Blocking fonético — corta 99% dos pares antes de comparar</td></tr>
+          <tr><td>Otimizador e planos de execução</td><td>Foi lendo o plano que apareceu o <code>MERGE JOIN</code> e nasceu o ganho de 197×</td></tr>
+          <tr><td>Constraints <code>UNIQUE</code></td><td>As invariantes de identidade são impostas pelo banco, não pelo código</td></tr>
+          <tr><td>CLOB (<code>payload_bruto</code>)</td><td>Guarda o documento original para reprocessar e auditar</td></tr>
+          <tr><td>Wallet mTLS</td><td>Conexão autenticada por certificado, sem senha em texto no cliente</td></tr>
+          <tr><td>Autonomous (patch e backup automáticos)</td><td>Um time pequeno não administra banco</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>4.3 &nbsp;Os três serviços do roadmap, cada um amarrado a um problema real</h3>
+    <p>Não é lista de catálogo — cada item resolve algo que já apareceu no produto:</p>
+    <ul>
+      <li><strong>OCI Data Safe</strong> → mascarar dado de paciente em ambiente não-produtivo. Para dado de saúde isso é obrigação de LGPD, não enfeite.</li>
+      <li><strong>OCI Document Understanding</strong> → ler guia de faturamento, hoje digitada à mão. É de onde vem boa parte da glosa que o produto se propõe a atacar.</li>
+      <li><strong>AI Vector Search (26ai)</strong> → similaridade semântica de nomes, <strong>se</strong> superar o Jaro-Winkler num teste comparativo. Enquanto não superar, não entra.</li>
+    </ul>
+    <p>A ordem importa: preferimos fazer um serviço direito a encostar em doze.</p>
+  </section>
+
+  <!-- ============================ 5 ============================ -->
+  <section class="bloco" id="d5">
+    <h2><span class="num">5</span>Como a solução escala</h2>
+    <p class="chapeu">Parte 4 &middot; Do que já foi medido até o crescimento de receita.</p>
+
+    <div class="diagrama">
+<pre class="mermaid">
+flowchart LR
+    H["Hoje — medido&lt;br/&gt;1 OCPU Always Free&lt;br/&gt;20 mil registros · 608 mil pares · 21 s"]
+    T["Escala técnica&lt;br/&gt;processamento incremental&lt;br/&gt;blocking mais seletivo · autoscaling&lt;br/&gt;fila de ingestão com quarentena"]
+    P["Escala de produto&lt;br/&gt;novo conector é uma classe&lt;br/&gt;testes de contrato por ERP&lt;br/&gt;multi-tenant"]
+    N["Escala de receita&lt;br/&gt;plataforma + conector ativo&lt;br/&gt;cada cliente cresce sozinho&lt;br/&gt;dado limpo vira insumo"]
+
+    H --&gt; T --&gt; P --&gt; N
+
+    classDef existe fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef desenho fill:#fef9c3,stroke:#ca8a04,stroke-dasharray: 4 3,color:#713f12
+
+    class H existe
+    class T,P,N desenho
+</pre>
+    </div>
+
+    <h3>O detalhe de cada faixa</h3>
+    <div class="tabela-rolagem">
+      <table>
+        <thead><tr><th>Faixa</th><th>Movimento</th><th>Por quê</th><th>Situação</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Hoje</strong></td><td>1 OCPU Always Free, uma instância por cliente</td><td>É o que está medido: 19.999 registros, 608.194 pares, 21,3 s</td><td>existe</td></tr>
+          <tr><td><strong>Técnica</strong></td><td>Processamento incremental</td><td>Reavaliar só o que chegou, em vez do lote inteiro</td><td>desenho</td></tr>
+          <tr><td><strong>Técnica</strong></td><td>Blocking mais seletivo</td><td>SOUNDEX gera 98% dos pares e é o próximo gargalo</td><td>desenho</td></tr>
+          <tr><td><strong>Técnica</strong></td><td>Autoscaling do Autonomous</td><td>OCPU sob demanda, sem migração nem downtime</td><td>desenho</td></tr>
+          <tr><td><strong>Técnica</strong></td><td>Fila de ingestão com quarentena</td><td>Documento que o parser não entende vai para revisão, não para o silêncio</td><td>desenho</td></tr>
+          <tr><td><strong>Produto</strong></td><td>Novo conector</td><td>O parser está isolado em uma classe — o resto do sistema não sabe o que é FHIR</td><td>a estrutura existe</td></tr>
+          <tr><td><strong>Produto</strong></td><td>Testes de contrato por ERP</td><td>Fixtures anonimizadas quebram a build antes de quebrar no cliente</td><td>desenho</td></tr>
+          <tr><td><strong>Produto</strong></td><td>Multi-tenant</td><td>Hoje o modelo assume uma instância por cliente</td><td>desenho</td></tr>
+          <tr><td><strong>Receita</strong></td><td>Plataforma + conector ativo</td><td>Cresce com a adoção sem punir o cliente por usar</td><td>desenho</td></tr>
+          <tr><td><strong>Receita</strong></td><td>Cada cliente cresce sozinho</td><td>Integrou o laboratório, paga mais um conector — receita sobe sem venda nova</td><td>desenho</td></tr>
+          <tr><td><strong>Receita</strong></td><td>Dado limpo vira insumo</td><td>Back-office, glosa e IA clínica — expansão dentro de quem já paga</td><td>desenho</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <strong>A frase que sustenta a escala técnica:</strong> o motor é o mesmo para dezessete registros ou para
+      cento e vinte mil, porque a comparação roda no banco com blocking — não vira produto cartesiano. O que muda
+      com volume é o modo de disparo: hoje é lote, e o caminho para volume maior é incremental.
+    </p>
+
+    <div class="nota aviso">
+      <p><strong>Duas ressalvas honestas</strong>, porque a banca acha de qualquer jeito:</p>
+      <ul>
+        <li>Os 21 segundos são <strong>pessimistas</strong>: o pool de nomes da carga sintética tem só 230 nomes distintos, o que infla artificialmente os blocos de SOUNDEX. Com nome real, mais diverso, o custo cai.</li>
+        <li>Precisão de 100% vale <strong>para as deformações que a carga conhece</strong> (nome abreviado, sobrenome invertido, documento ausente). Dado real traz erro de digitação e nome social, que são mais difíceis.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>Documentos relacionados</strong> —
+  <code>docs/arquitetura.md</code> (ciclo de vida do dado, modelo de dados e decisões de arquitetura) ·
+  <code>docs/medicao-escala.md</code> (a medição do motor em volume) ·
+  <code>docs/modelo-de-negocio.md</code> (persona compradora, monetização, mercado e concorrência) ·
+  <code>docs/apresentacao/roteiro-demo.md</code> (a jornada da seção 3 executada clique a clique).
+  <br><br>
+  A versão em Markdown desta página, com o código-fonte dos diagramas, está em <code>docs/diagramas-fase-5.md</code>.
+</footer>
+
+<script src="mermaid.min.js" onerror="window.__mermaidLocalFalhou = true;"></script>
+<script>
+(function () {
+  var CDN = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.15.0/mermaid.min.js';
+
+  function desenhar() {
+    try {
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: 'loose',
+        theme: 'base',
+        fontFamily: "'Segoe UI', system-ui, -apple-system, Arial, sans-serif",
+        themeVariables: {
+          primaryColor: '#d7f2ee',
+          primaryTextColor: '#0f172a',
+          primaryBorderColor: '#0f766e',
+          lineColor: '#64748b',
+          secondaryColor: '#f1f5f9',
+          tertiaryColor: '#ffffff',
+          fontSize: '14px'
+        },
+        flowchart: { htmlLabels: true, curve: 'basis', useMaxWidth: true },
+        journey: { useMaxWidth: true },
+        quadrantChart: { chartWidth: 620, chartHeight: 620 }
+      });
+      mermaid.run({ querySelector: 'pre.mermaid' });
+    } catch (e) {
+      falhou();
+    }
+  }
+
+  function falhou() {
+    document.body.classList.add('sem-mermaid');
+  }
+
+  function carregarCdn() {
+    var s = document.createElement('script');
+    s.src = CDN;
+    s.onload = desenhar;
+    s.onerror = falhou;
+    document.head.appendChild(s);
+  }
+
+  if (typeof mermaid !== 'undefined') {
+    desenhar();
+  } else {
+    carregarCdn();
+  }
+})();
+</script>
+
+</body>
+</html>
