@@ -64,10 +64,47 @@ UPDATE sistema_origem SET ultima_sync = SYSTIMESTAMP     WHERE codigo <> 'LEGADO
 UPDATE sistema_origem SET ultima_sync = SYSTIMESTAMP - 1 WHERE codigo =  'LEGADO';
 COMMIT;
 
--- Conferência: o esperado é 15 registros, 1 vínculo, 1 paciente mestre, 0 decisões e 12 eventos.
-SELECT (SELECT COUNT(*) FROM registro_origem)       AS registros,
-       (SELECT COUNT(*) FROM vinculo_registro)      AS vinculos,
-       (SELECT COUNT(*) FROM paciente_mestre)       AS mestres,
-       (SELECT COUNT(*) FROM decisao_identificacao) AS decisoes,
-       (SELECT COUNT(*) FROM evento_clinico)        AS eventos
+-- 7. Auditoria das correções de guia feitas durante a demonstração
+DELETE FROM correcao_guia;
+COMMIT;
+
+-- 8. Os dados das guias, de volta ao que o seed plantou.
+--    Corrigir uma guia na tela SOBRESCREVE o dado errado — e o dado errado é justamente o
+--    que a demonstração precisa mostrar. Sem este passo, a segunda apresentação não teria
+--    carteirinha divergente nem CNS ausente para exibir.
+MERGE INTO guia_faturamento g
+USING (
+            SELECT  1 AS id, 'MARIA APARECIDA SOUZA'    AS nome, '708004288150003' AS cns, '31748590211' AS cpf, DATE '1964-04-12' AS nasc, '0041 8827 3390 05' AS cart FROM dual
+  UNION ALL SELECT  2, 'MARIA APARECIDA SOUZA',    CAST(NULL AS VARCHAR2(20)), '31748590211', DATE '1964-04-12', '0041 8827 3390 05' FROM dual
+  UNION ALL SELECT  3, 'MARIA APARECIDA SOUZA',    '708004288150003', '31748590211', DATE '1964-04-12', '0041 8827 3390 50' FROM dual
+  UNION ALL SELECT  4, 'MARIA APARECIDA SOUZA',    '708004288150003', '31748590211', DATE '1964-04-12', '0041 8827 3390 05' FROM dual
+  UNION ALL SELECT  5, 'M. A. SOUZA',              '708004288150003', CAST(NULL AS VARCHAR2(20)), DATE '1964-04-12', '0041 8827 3390 05' FROM dual
+  UNION ALL SELECT  6, 'M. A. SOUZA',              '708004288510003', NULL, DATE '1964-04-12', '0041 8827 3390 05' FROM dual
+  UNION ALL SELECT  7, 'M. A. SOUZA',              '708004288150003', NULL, DATE '1964-04-12', '0041 8827 3390 05' FROM dual
+  UNION ALL SELECT  8, 'MARIA APARECIDA DE SOUZA', '708004288150003', '31748590211', DATE '1965-04-12', '0041 8827 3390 05' FROM dual
+  UNION ALL SELECT  9, 'MARIA APARECIDA DE SOUZA', '708004288150003', '31748590211', DATE '1964-04-12', '0041 8827 3390 05' FROM dual
+  UNION ALL SELECT 10, 'CARLOS EDUARDO PRADO',     '704118833900002', '62230198544', DATE '1977-02-19', '0072 4410 8890 12' FROM dual
+  UNION ALL SELECT 11, 'TEREZA CRISTINA MOURA',    '709332044710008', '80411533067', DATE '1969-06-25', '0072 4410 3321 08' FROM dual
+  UNION ALL SELECT 12, 'ANA BEATRIZ LIMA',         '706441099230004', '22874061509', DATE '1982-11-30', '0072 4410 5567 33' FROM dual
+  UNION ALL SELECT 13, 'ROBERTO NASCIMENTO',       NULL,              '15088344720', DATE '1958-07-07', '0072 4410 9902 41' FROM dual
+  UNION ALL SELECT 14, 'T. C. MOURA',              '709332044710008', NULL,          DATE '1969-06-25', '0072 4410 3321 08' FROM dual
+) s ON (g.id = s.id)
+WHEN MATCHED THEN UPDATE SET
+       g.nome_paciente       = s.nome,
+       g.cns_paciente        = s.cns,
+       g.cpf_paciente        = s.cpf,
+       g.nascimento_paciente = s.nasc,
+       g.carteirinha         = s.cart;
+COMMIT;
+
+-- Conferência: o esperado é 15 registros, 1 vínculo, 1 paciente mestre, 0 decisões,
+-- 12 eventos, 14 guias, 0 correções e 14 guias com alerta.
+SELECT (SELECT COUNT(*) FROM registro_origem)             AS registros,
+       (SELECT COUNT(*) FROM vinculo_registro)            AS vinculos,
+       (SELECT COUNT(*) FROM paciente_mestre)             AS mestres,
+       (SELECT COUNT(*) FROM decisao_identificacao)       AS decisoes,
+       (SELECT COUNT(*) FROM evento_clinico)              AS eventos,
+       (SELECT COUNT(*) FROM guia_faturamento)            AS guias,
+       (SELECT COUNT(*) FROM correcao_guia)               AS correcoes,
+       (SELECT COUNT(DISTINCT guia_id) FROM vw_risco_glosa) AS com_alerta
   FROM dual;
