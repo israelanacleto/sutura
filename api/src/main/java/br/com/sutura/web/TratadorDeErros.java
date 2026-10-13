@@ -1,6 +1,7 @@
 package br.com.sutura.web;
 
 import br.com.sutura.ingest.FhirBundleParser.BundleInvalidoException;
+import br.com.sutura.service.GlosaService.CorrecaoIndisponivelException;
 import br.com.sutura.service.IdentificacaoService.CandidatoIndisponivelException;
 import java.time.OffsetDateTime;
 import java.util.NoSuchElementException;
@@ -18,8 +19,13 @@ public class TratadorDeErros {
         return montar(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
-    @ExceptionHandler(CandidatoIndisponivelException.class)
-    public ProblemDetail conflito(CandidatoIndisponivelException e) {
+    /**
+     * Os dois casos em que a operação é legítima mas o estado atual não permite: par que
+     * saiu da fila, e guia sem cadastro unificado de onde copiar. Nenhum dos dois é erro
+     * de quem chamou — é o sistema recusando uma ação que faria estrago.
+     */
+    @ExceptionHandler({CandidatoIndisponivelException.class, CorrecaoIndisponivelException.class})
+    public ProblemDetail conflito(RuntimeException e) {
         return montar(HttpStatus.CONFLICT, e.getMessage());
     }
 

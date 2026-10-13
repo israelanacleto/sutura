@@ -1,9 +1,24 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Candidato, Paciente, SourceSystem, SystemId } from './models';
+import {
+  Candidato,
+  GuiaDetalhe,
+  Paciente,
+  PainelGuias,
+  SourceSystem,
+  SystemId,
+} from './models';
 
 export type Decisao = 'costurado' | 'separado';
+
+/** Uma correção aplicada nesta sessão, guardada só para dar retorno visual na tela. */
+export interface CorrecaoFeita {
+  id: string;
+  numeroGuia: string;
+  paciente: string;
+  campos: string[];
+}
 
 /** Uma decisão tomada nesta sessão, guardada só para dar retorno visual na tela. */
 export interface DecisaoTomada {
@@ -51,19 +66,34 @@ export class SuturaStore {
     return `${API}/pacientes/1`;
   });
 
+  private readonly recursoGuias = httpResource<PainelGuias>(
+    () => {
+      this.versao();
+      return `${API}/guias`;
+    },
+    { defaultValue: { valorEmRisco: '—', guiasComAlerta: 0, guiasProntas: 0, guias: [] } },
+  );
+
   // ---------------------------------------------------------------- leitura
 
   readonly conexoes = this.recursoConexoes.value;
   readonly fila = this.recursoCandidatos.value;
   readonly paciente = this.recursoPaciente.value;
+  readonly painel = this.recursoGuias.value;
 
   readonly carregandoConexoes = this.recursoConexoes.isLoading;
   readonly carregandoFila = this.recursoCandidatos.isLoading;
   readonly carregandoPaciente = this.recursoPaciente.isLoading;
+  readonly carregandoGuias = this.recursoGuias.isLoading;
 
   readonly erroConexoes = this.recursoConexoes.error;
   readonly erroFila = this.recursoCandidatos.error;
   readonly erroPaciente = this.recursoPaciente.error;
+  readonly erroGuias = this.recursoGuias.error;
+
+  readonly guias = computed(() => this.painel().guias);
+  readonly guiasComAlerta = computed(() => this.painel().guiasComAlerta);
+  readonly valorEmRisco = computed(() => this.painel().valorEmRisco);
 
   readonly pendentes = computed(() => this.fila().length);
   readonly conectados = computed(
@@ -155,6 +185,69 @@ export class SuturaStore {
       );
     } finally {
       this.decidindo.set(null);
+    }
+  }
+
+  // ------------------------------------------------------------- faturamento
+
+  readonly guiaAberta = signal<GuiaDetalhe | null>(null);
+  readonly carregandoDetalhe = signal<string | null>(null);
+  readonly corrigindo = signal<string | null>(null);
+  readonly correcoesDaSessao = signal<CorrecaoFeita[]>([]);
+
+  /**
+   * Abre a guia buscando o detalhe sob demanda. A lista não carrega as evidências de
+   * todas as guias de uma vez: a comparação campo a campo só interessa na que está aberta.
+   */
+  async abrirGuia(id: string): Promise<void> {
+    if (this.guiaAberta()?.id === id) {
+      this.guiaAberta.set(null);
+      return;
+    }
+    this.guiaAberta.set(null);
+    this.carregandoDetalhe.set(id);
+    this.erroDeAcao.set(null);
+
+    try {
+      this.guiaAberta.set(
+        await firstValueFrom(this.http.get<GuiaDetalhe>(`${API}/guias/${id}`)),
+      );
+    } catch {
+      this.erroDeAcao.set('Não foi possível abrir a guia. O backend está no ar?');
+    } finally {
+      this.carregandoDetalhe.set(null);
+    }
+  }
+
+  /**
+   * Aplica na guia os campos escolhidos. Não existe "corrigir tudo": a lista de campos
+   * vem da seleção do operador, pelo mesmo motivo que a costura exige decisão humana.
+   */
+  async corrigir(guia: GuiaDetalhe, campos: string[]): Promise<void> {
+    if (campos.length === 0) return;
+    this.corrigindo.set(guia.id);
+    this.erroDeAcao.set(null);
+
+    try {
+      await firstValueFrom(
+        this.http.post<void>(`${API}/guias/${guia.id}/corrigir`, {
+          campos,
+          usuario: 'israel.anacleto',
+        }),
+      );
+
+      this.correcoesDaSessao.update((lista) => [
+        { id: guia.id, numeroGuia: guia.numeroGuia, paciente: guia.paciente, campos },
+        ...lista,
+      ]);
+      this.guiaAberta.set(null);
+      this.recarregar();
+    } catch {
+      this.erroDeAcao.set(
+        'Não foi possível aplicar a correção. O cadastro unificado pode não ter o dado.',
+      );
+    } finally {
+      this.corrigindo.set(null);
     }
   }
 

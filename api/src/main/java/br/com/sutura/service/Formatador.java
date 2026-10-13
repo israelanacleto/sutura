@@ -1,7 +1,10 @@
 package br.com.sutura.service;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * O banco guarda documento sem máscara — é assim que se compara CNS e CPF sem depender
@@ -45,6 +48,14 @@ public final class Formatador {
 
     public static String data(LocalDate valor) {
         return valor == null ? AUSENTE : valor.format(DATA);
+    }
+
+    /** 8400.00 -> R$ 8.400,00 */
+    public static String moeda(BigDecimal valor) {
+        if (valor == null) {
+            return AUSENTE;
+        }
+        return NumberFormat.getCurrencyInstance(Locale.of("pt", "BR")).format(valor);
     }
 
     public static String texto(String valor) {

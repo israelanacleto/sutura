@@ -96,4 +96,64 @@ public final class Dtos {
             int registrosJaExistentes,
             int eventosCriados) {
     }
+
+    // ------------------------------------------------------------------ glosa
+
+    /**
+     * Um alerta de risco. Quando `campo` é nulo não há o que corrigir na guia — o problema
+     * está na identificação, e a tela troca o botão de correção pelo link para a fila.
+     */
+    public record AlertaDto(
+            String codigo,
+            String descricao,
+            String orientacao,
+            String severidade,
+            String campo,
+            String valorNaGuia,
+            String valorNoCadastro,
+            Integer similaridadeNome,
+            boolean corrigivel) {
+    }
+
+    public record GuiaResumoDto(
+            String id,
+            String numeroGuia,
+            String paciente,
+            String convenio,
+            String procedimento,
+            String valor,
+            String dataEmissao,
+            String severidade,
+            List<String> alertas,
+            boolean bloqueadaPorIdentificacao) {
+    }
+
+    /** A tela inteira em uma chamada: o número do topo e a lista. */
+    public record PainelGuiasDto(
+            String valorEmRisco,
+            int guiasComAlerta,
+            long guiasProntas,
+            List<GuiaResumoDto> guias) {
+    }
+
+    public record GuiaDetalheDto(
+            String id,
+            String numeroGuia,
+            String paciente,
+            String convenio,
+            String procedimento,
+            String valor,
+            String dataEmissao,
+            String status,
+            String sistema,
+            String unidade,
+            String parPendenteId,
+            List<AlertaDto> alertas,
+            List<ComparacaoCampoDto> campos) {
+    }
+
+    public record CorrecaoRequest(
+            List<String> campos,
+            String usuario) {
+    }
 }

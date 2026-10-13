@@ -1,0 +1,241 @@
+<div class="page">
+  <header class="page-head">
+    <h1>Faturamento e prevenção de glosa</h1>
+    <p class="sub">
+      Cada guia é validada contra o cadastro unificado do paciente. As sete regras rodam no
+      Oracle e devolvem a evidência da comparação — não só o veredito. A correção é por
+      campo, escolhida por quem opera.
+    </p>
+  </header>
+
+  @if (store.erroGuias()) {
+    <div class="falha">
+      <strong>Não foi possível carregar as guias.</strong>
+      Verifique se o backend está no ar em <code>localhost:8080</code>.
+    </div>
+  }
+
+  <section class="kpi card">
+    <div class="kpi-principal">
+      <div class="eyebrow">Valor em risco</div>
+      <strong>{{ store.valorEmRisco() }}</strong>
+    </div>
+    <div class="kpi-divisor" aria-hidden="true"></div>
+    <div>
+      <div class="eyebrow">Guias com alerta</div>
+      <strong class="alerta">{{ store.guiasComAlerta() }}</strong>
+    </div>
+    <div>
+      <div class="eyebrow">Prontas para envio</div>
+      <strong>{{ store.painel().guiasProntas }}</strong>
+    </div>
+    <p class="regra">
+      Glosa de cadastro: paciente não identificado, duplicidade pendente, CNS, carteirinha,
+      nascimento e nome. Nenhuma depende de tabela TUSS ou de contrato de operadora.
+    </p>
+  </section>
+
+  @if (store.erroDeAcao(); as erro) {
+    <div class="falha surgir">{{ erro }}</div>
+  }
+
+  <section class="lista">
+    @for (c of store.correcoesDaSessao(); track c.id) {
+      <article class="card resolvido surgir">
+        <span class="badge badge-ok">Corrigida</span>
+        <span class="nomes">{{ c.numeroGuia }} · {{ c.paciente }}</span>
+        <span class="muted">
+          {{ c.campos.length }}
+          {{ c.campos.length === 1 ? 'campo aplicado' : 'campos aplicados' }} do cadastro
+        </span>
+      </article>
+    }
+
+    <!-- O erro manda sobre o carregamento: sem isto a tela mostra o aviso de falha e um
+         spinner girando ao mesmo tempo, dizendo duas coisas contraditórias. -->
+    @if (store.carregandoGuias() && store.guias().length === 0 && !store.erroGuias()) {
+      <div class="card carregando">
+        <span class="spinner"></span> Avaliando as regras no banco…
+      </div>
+    }
+
+    @for (g of store.guias(); track g.id) {
+      <article class="card guia" [class.aberto]="store.guiaAberta()?.id === g.id">
+        <header (click)="abrir(g.id)">
+          <div class="identificacao-guia">
+            <div class="numero mono">{{ g.numeroGuia }}</div>
+            <div class="muted">{{ g.dataEmissao }}</div>
+          </div>
+
+          <div class="corpo">
+            <div class="paciente">{{ g.paciente }}</div>
+            <div class="muted">{{ g.procedimento }} · {{ g.convenio }}</div>
+            <div class="etiquetas">
+              @for (a of g.alertas; track a) {
+                <span class="badge badge-regra">{{ rotulo(a) }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="cabecalho-fim">
+            <div class="valor">{{ g.valor }}</div>
+            <span class="badge" [class]="'badge ' + classeSeveridade(g.severidade)">
+              {{ g.severidade === 'ALTA' ? 'Risco alto' : 'Risco médio' }}
+            </span>
+            <span class="chevron" [class.girado]="store.guiaAberta()?.id === g.id">⌄</span>
+          </div>
+        </header>
+
+        @if (store.carregandoDetalhe() === g.id) {
+          <div class="detalhe carregando">
+            <span class="spinner"></span> Buscando a comparação com o cadastro…
+          </div>
+        }
+
+        @if (store.guiaAberta(); as d) {
+          @if (d.id === g.id) {
+            <div class="detalhe surgir">
+              <div class="origem muted">
+                Emitida a partir do registro em
+                <span class="badge badge-sistema" [style.background]="sistemas[d.sistema].cor">
+                  {{ sistemas[d.sistema].sigla }}
+                </span>
+                {{ sistemas[d.sistema].nome }} · {{ d.unidade }}
+              </div>
+
+              <div class="alertas">
+                @for (a of d.alertas; track a.codigo) {
+                  <div class="alerta-item" [class.bloqueio]="a.campo === null">
+                    <div class="alerta-topo">
+                      <span class="badge" [class]="'badge ' + classeSeveridade(a.severidade)">
+                        {{ rotulo(a.codigo) }}
+                      </span>
+                      @if (a.similaridadeNome !== null) {
+                        <span class="muted similaridade">
+                          similaridade do nome: {{ a.similaridadeNome }}%
+                        </span>
+                      }
+                    </div>
+                    <p class="alerta-descricao">{{ a.descricao }}</p>
+                    <p class="alerta-orientacao muted">{{ a.orientacao }}</p>
+
+                    @if (a.campo !== null) {
+                      <div class="evidencia">
+                        <div class="evidencia-lado">
+                          <div class="eyebrow">Na guia</div>
+                          <div class="mono">{{ a.valorNaGuia ?? '(em branco)' }}</div>
+                        </div>
+                        <div class="evidencia-sinal" aria-hidden="true">→</div>
+                        <div class="evidencia-lado">
+                          <div class="eyebrow">No cadastro unificado</div>
+                          <div class="mono">{{ a.valorNoCadastro ?? '(também em branco)' }}</div>
+                        </div>
+
+                        @if (a.corrigivel) {
+                          <label class="escolha">
+                            <input
+                              type="checkbox"
+                              [checked]="marcado(a.campo)"
+                              (change)="alternarCampo(a.campo)"
+                            />
+                            <span>Aplicar {{ nomeDoCampo(a.campo) }}</span>
+                          </label>
+                        } @else {
+                          <span class="sem-correcao muted">
+                            Sem correção automática: o cadastro também não tem este dado.
+                          </span>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+
+              @if (d.campos.length > 0) {
+                <table class="comparacao">
+                  <thead>
+                    <tr>
+                      <th>Campo</th>
+                      <th>Na guia</th>
+                      <th class="col-sinal"></th>
+                      <th>No cadastro unificado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (campo of d.campos; track campo.campo) {
+                      <tr [class]="campo.situacao">
+                        <th scope="row">{{ campo.campo }}</th>
+                        <td class="mono">{{ campo.a }}</td>
+                        <td class="col-sinal">{{ simbolo(campo.situacao) }}</td>
+                        <td class="mono">{{ campo.b }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+
+              <!-- Uma guia pode ter as duas naturezas de problema ao mesmo tempo: um campo
+                   que dá para corrigir agora e uma duplicidade que só se resolve na fila.
+                   Oferecer apenas um dos caminhos deixa o outro problema sem saída — e foi
+                   exatamente o que aconteceu na primeira versão desta tela. -->
+              <div class="acoes">
+                @if (temCorrigivel(d)) {
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    [disabled]="selecionados().size === 0 || store.corrigindo() === d.id"
+                    (click)="corrigir(d)"
+                  >
+                    @if (store.corrigindo() === d.id) {
+                      <span class="spinner"></span> Aplicando…
+                    } @else {
+                      Corrigir com o cadastro unificado
+                    }
+                  </button>
+                }
+
+                @if (bloqueada(d)) {
+                  <a
+                    routerLink="/identificacao"
+                    [queryParams]="parametrosDaFila(d)"
+                    class="btn"
+                    [class.btn-primary]="!temCorrigivel(d)"
+                  >
+                    Resolver na fila de identificação →
+                  </a>
+                }
+
+                <span class="muted rastro">
+                  @if (temCorrigivel(d) && bloqueada(d)) {
+                    Parte desta guia dá para corrigir agora. A duplicidade, não — ela só se
+                    resolve na fila de identificação.
+                  } @else if (temCorrigivel(d)) {
+                    @if (selecionados().size === 0) {
+                      Marque os campos que deseja aplicar. Nada é corrigido por padrão.
+                    } @else {
+                      {{ selecionados().size }}
+                      {{ selecionados().size === 1 ? 'campo será aplicado' : 'campos serão aplicados' }}
+                      e gravados com usuário, data e hora.
+                    }
+                  } @else {
+                    Não há o que corrigir nesta guia: o problema está uma camada abaixo, na
+                    identidade do paciente.
+                  }
+                </span>
+              </div>
+            </div>
+          }
+        }
+      </article>
+    }
+
+    @if (!store.carregandoGuias() && store.guias().length === 0 && !store.erroGuias()) {
+      <div class="card vazio surgir">
+        <strong>Nenhuma guia em risco.</strong>
+        <span class="muted">
+          Todas as guias prontas para envio conferem com o cadastro unificado.
+        </span>
+      </div>
+    }
+  </section>
+</div>
