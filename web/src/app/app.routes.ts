@@ -18,5 +18,10 @@ export const routes: Routes = [
     title: 'Histórico unificado · Sutura',
     loadComponent: () => import('./pages/paciente/paciente').then((m) => m.PacienteView),
   },
+  {
+    path: 'faturamento',
+    title: 'Faturamento e glosa · Sutura',
+    loadComponent: () => import('./pages/faturamento/faturamento').then((m) => m.Faturamento),
+  },
   { path: '**', redirectTo: 'conexoes' },
 ];

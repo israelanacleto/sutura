@@ -87,3 +87,61 @@ export interface Paciente {
   cadastros: CadastroFragmentado[];
   eventos: EventoClinico[];
 }
+
+// ------------------------------------------------------------------ glosa
+
+export type Severidade = 'ALTA' | 'MEDIA' | 'BAIXA';
+
+/**
+ * Uma regra violada por uma guia. Quando `campo` é nulo não há o que corrigir na guia —
+ * o problema está na identificação, e a tela oferece o caminho para a fila em vez de um
+ * botão que não resolveria nada.
+ */
+export interface AlertaGlosa {
+  codigo: string;
+  descricao: string;
+  orientacao: string;
+  severidade: Severidade;
+  campo: string | null;
+  valorNaGuia: string | null;
+  valorNoCadastro: string | null;
+  similaridadeNome: number | null;
+  corrigivel: boolean;
+}
+
+export interface GuiaResumo {
+  id: string;
+  numeroGuia: string;
+  paciente: string;
+  convenio: string;
+  procedimento: string;
+  valor: string;
+  dataEmissao: string;
+  severidade: Severidade;
+  alertas: string[];
+  bloqueadaPorIdentificacao: boolean;
+}
+
+export interface PainelGuias {
+  valorEmRisco: string;
+  guiasComAlerta: number;
+  guiasProntas: number;
+  guias: GuiaResumo[];
+}
+
+export interface GuiaDetalhe {
+  id: string;
+  numeroGuia: string;
+  paciente: string;
+  convenio: string;
+  procedimento: string;
+  valor: string;
+  dataEmissao: string;
+  status: string;
+  sistema: SystemId;
+  unidade: string;
+  /** O par na fila de identificação que está travando esta guia, se houver. */
+  parPendenteId: string | null;
+  alertas: AlertaGlosa[];
+  campos: ComparacaoCampo[];
+}

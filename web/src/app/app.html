@@ -41,6 +41,12 @@
       <a routerLink="/paciente" routerLinkActive="ativo">
         <span class="rotulo">Histórico unificado</span>
       </a>
+      <a routerLink="/faturamento" routerLinkActive="ativo">
+        <span class="rotulo">Faturamento</span>
+        @if (store.guiasComAlerta() > 0) {
+          <span class="contador alerta">{{ store.guiasComAlerta() }}</span>
+        }
+      </a>
     </nav>
 
     <div class="nav-rodape">
