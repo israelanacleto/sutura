@@ -93,8 +93,8 @@ reais dentro de uma reunião de orçamento. Segurança do paciente convence, mas
 verba sozinha.
 
 Isso tem consequência prática no produto: a tela que fala com o comprador é a de **glosa**
-— que ainda não existe. A de identificação de pacientes fala com TI e com a diretoria
-clínica, que influenciam mas não assinam.
+— construída em outubro de 2026, em `/faturamento`. A de identificação de pacientes fala com
+TI e com a diretoria clínica, que influenciam mas não assinam.
 
 ---
 
@@ -349,8 +349,11 @@ Honestidade sobre os buracos, porque a banca vai achar de qualquer jeito:
 - **Se o ERP libera a API.** É o maior risco do negócio e continua sem validação de campo.
   Era a pergunta prioritária para uma banca de mercado, e ainda vale fazer.
 - **Custo de aquisição e ciclo de venda.** Ninguém do grupo vendeu para hospital.
-- **A camada de glosa não existe.** É o pilar que fala com o comprador, e está fora do
-  escopo entregue.
+
+> **Atualizado em 27/11/2026:** este documento é de setembro e listava aqui que "a camada de
+> glosa não existe". **Ela foi construída em outubro** — três tabelas, sete regras em SQL,
+> três endpoints e a tela `/faturamento`. O pilar que fala com o comprador existe. Ver
+> [documento-consolidado.md](documento-consolidado.md) e [arquitetura.md](arquitetura.md).
 
 ---
 
