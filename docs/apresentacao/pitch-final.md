@@ -250,11 +250,19 @@ obriga a refazer o resto.
 > trinta no terceiro. A receita recorrente anual sai de cento e oitenta e quatro mil reais
 > para dois milhões e quatrocentos mil.
 >
-> São premissas, não pesquisa de mercado — e estão marcadas como tal. O que ainda não
-> sabemos é custo de aquisição e ciclo de venda. Os dois primeiros clientes existem para
-> medir isso."
+> A margem bruta por cliente é de oitenta por cento, e **o ponto de equilíbrio é de nove
+> clientes.** De mil a dois mil clientes possíveis no mercado, a gente precisa de nove para
+> não dar prejuízo.
+>
+> O primeiro ano é deficitário de propósito: são três pilotos que existem para medir o que
+> a gente não sabe — custo de aquisição e ciclo de venda. Nenhum dos dois está na projeção,
+> e essa é a maior fragilidade dela."
 
-**Tela:** a tabela de projeção de três anos.
+**Tela:** a tabela de projeção com custo e resultado.
+
+> 💡 **"Nove clientes" é o número mais forte deste bloco.** É concreto, pequeno e
+> verificável — o oposto de "vamos pegar 1% de um mercado de bilhões", que quem ouve
+> desconta na hora.
 
 ---
 

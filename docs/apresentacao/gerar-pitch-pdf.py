@@ -290,17 +290,28 @@ S.append(slide("""
 S.append(slide("""
 <div class="eyebrow">9 · Projeções</div>
 <h2>Premissas abertas, não pesquisa de mercado.</h2>
-<table style="margin-top:14px">
+<table style="margin-top:10px">
   <tr><th>&nbsp;</th><th>Ano 1</th><th>Ano 2</th><th class="destaque">Ano 3</th></tr>
   <tr><td>Clientes ativos</td><td class="num">3</td><td class="num">12</td><td class="num">30</td></tr>
-  <tr><td>Conectores por cliente</td><td class="num">2</td><td class="num">3</td><td class="num">4</td></tr>
-  <tr><td>Receita mensal por cliente</td><td class="num">R$ 5.100</td><td class="num">R$ 5.900</td><td class="num">R$ 6.700</td></tr>
-  <tr><td><b>MRR no fim do ano</b></td><td class="num">R$ 15,3 mil</td><td class="num">R$ 70,8 mil</td><td class="num" style="color:#0f766e">R$ 201 mil</td></tr>
+  <tr><td><b>Receita mensal (MRR)</b></td><td class="num">R$ 15,3 mil</td><td class="num">R$ 70,8 mil</td><td class="num" style="color:#0f766e">R$ 201 mil</td></tr>
+  <tr><td>Custo mensal</td><td class="num">R$ 27,6 mil</td><td class="num">R$ 56,4 mil</td><td class="num">R$ 109 mil</td></tr>
+  <tr><td><b>Resultado mensal</b></td><td class="num" style="color:#b4352c">−R$ 12,3 mil</td><td class="num" style="color:#0f766e">+R$ 14,4 mil</td><td class="num" style="color:#0f766e">+R$ 92 mil</td></tr>
   <tr><td><b>ARR anualizado</b></td><td class="num">R$ 184 mil</td><td class="num">R$ 850 mil</td><td class="num" style="color:#0f766e">R$ 2,41 mi</td></tr>
 </table>
-<div class="caixa alertabox" style="margin-top:30px">
-  <p><b>O que ainda não sabemos:</b> custo de aquisição e ciclo de venda. Ninguém do grupo
-  vendeu para hospital. Os dois primeiros clientes existem para medir isso, não para dar lucro.</p>
+<div class="cols" style="margin-top:10px;align-items:flex-start;flex:0 0 auto">
+  <div class="col">
+    <div class="eyebrow">Ponto de equilíbrio</div>
+    <div class="big" style="font-size:62px">9 clientes</div>
+    <p style="margin-top:10px;font-size:18px">Margem bruta de <b>80%</b> por cliente. De mil
+    a dois mil possíveis — precisamos de nove.</p>
+  </div>
+  <div class="col">
+    <div class="caixa alertabox">
+      <p style="font-size:17px"><b>O ano 1 é deficitário de propósito.</b> Três pilotos, a
+      preço reduzido, que existem para medir o que não sabemos: custo de aquisição e ciclo
+      de venda. Nenhum dos dois entra na tabela — e essa é a maior fragilidade da projeção.</p>
+    </div>
+  </div>
 </div>""", 11))
 
 S.append(slide(f"""

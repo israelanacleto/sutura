@@ -249,20 +249,65 @@ calibrada por venda consultiva: ciclo longo, poucos clientes, ticket alto.
 | **MRR no fim do ano** | **R$ 15.300** | **R$ 70.800** | **R$ 201.000** |
 | **ARR anualizado** | **R$ 184 mil** | **R$ 850 mil** | **R$ 2,41 mi** |
 
-**Estrutura de custos, em ordem de peso:**
+### 5.6 · Estrutura de custos
 
-| Linha | Natureza | Observação |
+**Premissas de custo** — mesma regra do resto: hipótese do grupo, aberta e contestável.
+
+| Linha | Premissa adotada | Natureza |
 |---|---|---|
-| Pessoas | fixo, dominante | Desenvolvimento e implantação. É o grosso |
-| Infraestrutura Oracle | variável por cliente | ADB por instância; hoje em camada Always Free |
-| Aquisição | variável por venda | Venda consultiva, ciclo longo — CAC a medir |
-| Manutenção de conector | fixo por conector | Cresce com o catálogo, não com o cliente |
+| Equipe | R$ 20 mil/mês no ano 1, crescendo para R$ 65 mil no ano 3 | fixo, dominante |
+| Infraestrutura Oracle | R$ 1.200 por cliente/mês | variável por cliente |
+| Manutenção de conector | R$ 2.000/mês por conector do catálogo | fixo por conector |
+| Aquisição | não estimado | **a medir** |
+
+> **Sobre o custo da equipe:** considera dedicação integral remunerada a preço de mercado.
+> Hoje o time é de estudantes e o custo real é zero — mas uma projeção que assume trabalho
+> de graça não é projeção, é ilusão. O número abaixo é o que a operação custaria para
+> existir de verdade.
+>
+> **Sobre a infraestrutura:** R$ 1.200/cliente é estimativa para um Autonomous Database
+> pequeno fora da camada gratuita. **Precisa ser confirmado na calculadora de preços da
+> Oracle** antes de ir para qualquer conversa comercial.
+
+**Custo mensal projetado:**
+
+| | Ano 1 | Ano 2 | Ano 3 |
+|---|---|---|---|
+| Equipe | R$ 20.000 | R$ 36.000 | R$ 65.000 |
+| Infraestrutura (R$ 1.200 × clientes) | R$ 3.600 | R$ 14.400 | R$ 36.000 |
+| Manutenção de conectores | R$ 4.000 | R$ 6.000 | R$ 8.000 |
+| **Custo mensal total** | **R$ 27.600** | **R$ 56.400** | **R$ 109.000** |
+
+### 5.7 · Margem e ponto de equilíbrio
+
+| | Ano 1 | Ano 2 | Ano 3 |
+|---|---|---|---|
+| Receita mensal (MRR) | R$ 15.300 | R$ 70.800 | R$ 201.000 |
+| Custo mensal | R$ 27.600 | R$ 56.400 | R$ 109.000 |
+| **Resultado mensal** | **−R$ 12.300** | **+R$ 14.400** | **+R$ 92.000** |
+
+**A margem bruta por cliente é de 80%.** Cada cliente paga R$ 5.900 e custa R$ 1.200 de
+infraestrutura — sobram R$ 4.700 para cobrir o fixo. É a economia típica de SaaS, e é o que
+torna a conta viável apesar do ciclo de venda longo.
+
+**O ponto de equilíbrio é de nove clientes.** Com a estrutura do ano 2 — R$ 42 mil de custo
+fixo entre equipe e manutenção de conectores — bastam `42.000 ÷ 4.700 ≈ 9` clientes para a
+operação se pagar.
+
+> **Esse é o número que importa numa conversa com investidor.** Não é "vamos pegar 1% de um
+> mercado de bilhões". É: **de mil a dois mil clientes possíveis, precisamos de nove para
+> não dar prejuízo.**
+
+**O ano 1 é deficitário de propósito.** São três clientes-piloto, com preço reduzido, e eles
+existem para medir o que não sabemos: custo de aquisição e ciclo de venda. Nenhum dos dois
+entra na tabela acima, e essa é a maior fragilidade da projeção.
 
 > **O que não sabemos, e isso é relevante:** custo de aquisição e ciclo de venda. Ninguém do
-> grupo vendeu para hospital. Os dois primeiros clientes existem para medir isso, não para
-> dar lucro.
+> grupo vendeu para hospital. Se o CAC for alto — e em venda consultiva para hospital
+> costuma ser —, o ponto de equilíbrio sobe. Os dois primeiros clientes existem para medir
+> isso, não para dar lucro.
 
-### 5.6 · Indicadores (KPIs)
+### 5.8 · Indicadores (KPIs)
 
 | Camada | Indicador | Por que importa |
 |---|---|---|
@@ -277,7 +322,7 @@ calibrada por venda consultiva: ciclo longo, poucos clientes, ticket alto.
 | **Negócio** | Churn por unidade de saúde | Em venda de ticket alto, perder um cliente dói |
 | **Negócio** | CAC e LTV | A medir com os primeiros clientes |
 
-### 5.7 · Como o MVP evolui para produto escalável
+### 5.9 · Como o MVP evolui para produto escalável
 
 Quatro propriedades, já exercidas e não apenas desenhadas — detalhadas em
 [arquitetura.md](arquitetura.md):
