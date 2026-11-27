@@ -1,7 +1,16 @@
 # Roadmap de evolução até o MVP final
 
-Documento de 13/10/2026. O que já está construído, o que vem na Fase 7, e por que nessa
-ordem.
+Documento de 13/10/2026. O que já está construído, o que vem depois, e por que nessa ordem.
+
+> **Nota de 27/11/2026 — uma ambiguidade que vale desfazer.** Este documento foi escrito na
+> entrega da Fase 6 e usa "Fase 7" com o sentido de *próximo ciclo de desenvolvimento do
+> produto*. A **Fase 7 acadêmica** é outra coisa: é a entrega final do Challenge, de MVP
+> funcional e consolidação do negócio — e está em
+> [documento-consolidado.md](documento-consolidado.md).
+>
+> Para evitar a leitura de que autenticação e deploy seriam entregues nesta fase e não
+> foram: eles nunca estiveram no escopo da entrega acadêmica. São o próximo passo **do
+> produto**, e seguem priorizados como P0 abaixo.
 
 > **Critério de priorização usado aqui:** primeiro o que impede o produto de ser usado por
 > alguém de fora do grupo. Depois o que reduz risco de erro em dado de saúde. Só então o que
@@ -48,7 +57,7 @@ divergências que estavam escondidas atrás da falta de identidade.
 
 ---
 
-## 2. Fase 7 — o que vem, e por quê
+## 2. O próximo ciclo do produto — o que vem, e por quê
 
 ### Prioridade 0 — sem isso não dá para pôr na frente de um cliente
 
@@ -121,18 +130,18 @@ flowchart LR
         F3["Fase 3<br/>prevenção de glosa"]
     end
 
-    subgraph p0["Fase 7 · P0"]
+    subgraph p0["Próximo ciclo · P0"]
         A["autenticação<br/>+ auditoria real"]
         B["deploy"]
     end
 
-    subgraph p1["Fase 7 · P1"]
+    subgraph p1["Próximo ciclo · P1"]
         C["testes<br/>automatizados"]
         D["regra de CPF"]
         E["melhorias do<br/>teste de usuário"]
     end
 
-    subgraph p2["Fase 7 · P2"]
+    subgraph p2["Próximo ciclo · P2"]
         G["HL7 v2"]
         H["desfazer costura"]
         I["devolver guia<br/>ao ERP"]
